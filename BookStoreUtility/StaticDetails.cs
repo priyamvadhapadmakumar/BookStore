@@ -6,5 +6,10 @@ namespace BookStoreUtility
 {
     public static class StaticDetails
     {
+        public const string ProcCreateCoverType = "usp_CreateCoverType";
+        public const string ProcGetCoverType = "usp_GetCoverType";
+        public const string ProcGetAllCoverType = "usp_GetAllCoverType";
+        public const string ProcUpdateCoverType = "usp_UpdateCoverType";
+        public const string ProcDeleteCoverType = "usp_DeleteCoverType";
     }
 }

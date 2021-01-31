@@ -1,5 +1,7 @@
 ﻿using BookStoreDataAccess.Repository.IRepository;
 using BookStoreModels;
+using BookStoreUtility;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -50,9 +52,11 @@ namespace BookStore.Areas.Admin.Controllers
             if(ModelState.IsValid)//CHECKS ALL VALIDATIONS ARE CHECKED IN GET METHOD AND CLIENT SIDE
                 //double security feature
             {
+                var parameter = new DynamicParameters();
+                parameter.Add("@Name", coverType.Name);
                 if(coverType.Id==0)
                 {
-                    _unitOfWork.CoverType.Add(coverType);
+                    _unitOfWork.StoredProcedureCall.Execute(StaticDetails.ProcCreateCoverType,parameter);
                     
                 }
                 else
@@ -71,18 +75,22 @@ namespace BookStore.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll() //used in coverType.js(created after creating index view)
         {
-            var allObj = _unitOfWork.CoverType.GetAll();
+            var allObj = _unitOfWork.StoredProcedureCall.List<CoverType>(
+                StaticDetails.ProcGetAllCoverType,null);//add static details(like all procedure names in utilities)
             return Json(new { data = allObj });
         }
         [HttpDelete]
         public IActionResult Delete(int id)
         {
-            var objFromDb = _unitOfWork.CoverType.Get(id);
+            var parameter = new DynamicParameters();//using Dapper
+            parameter.Add("@id", id);
+            var objFromDb = _unitOfWork.StoredProcedureCall.OneRecord<CoverType>(
+                StaticDetails.ProcDeleteCoverType, parameter);
             if(objFromDb == null)
             {
                 return Json(new { success = false, message = "Error while deleting" });
             }
-            _unitOfWork.CoverType.Remove(objFromDb);
+            _unitOfWork.StoredProcedureCall.Execute(StaticDetails.ProcDeleteCoverType, parameter);
             _unitOfWork.Save();
             return Json(new { success = true, message = "Delete successful" });
 

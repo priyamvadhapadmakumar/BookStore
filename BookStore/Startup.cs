@@ -47,8 +47,9 @@ namespace BookStore
              *services.AddRazorPages();to add IdentityClassLibrary which are razor pages and we
              *need to add that manually here. But all these covered in .NET5.0 and above*/
 
+            //To test Bookstore controller APIs
             services.AddSwaggerGen(s =>
-            {
+            { 
                 s.SwaggerDoc("v1", new OpenApiInfo { Title = "Bookstore API", Version = "v1" });
             });
         }
