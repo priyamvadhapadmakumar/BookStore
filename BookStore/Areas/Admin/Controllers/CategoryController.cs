@@ -38,7 +38,7 @@ namespace BookStore.Areas.Admin.Controllers
             return View(category);//view category that was retreived from db for the given id
         }
 
-        [HttpPost]
+        [HttpPost("upsert-category")]
         [ValidateAntiForgeryToken]
         /*writes a unique value to a http only cookie and same value is returned to the form. After the
          * page is submitted, an error is raised when this value doesn't match with the form value. 
@@ -68,13 +68,13 @@ namespace BookStore.Areas.Admin.Controllers
 
         #region API CALLS
 
-        [HttpGet]
+        [HttpGet("get-all-categories")]
         public IActionResult GetAll() //used in category.js(created after creating index view)
         {
             var allObj = _unitOfWork.Category.GetAll();
             return Json(new { data = allObj });
         }
-        [HttpDelete]
+        [HttpDelete("delete-category")]
         public IActionResult Delete(int id)
         {
             var objFromDb = _unitOfWork.Category.Get(id);

@@ -40,7 +40,7 @@ namespace BookStore.Areas.Admin.Controllers
             return View(coverType);//view coverType that was retreived from db for the given id
         }
 
-        [HttpPost]
+        [HttpPost("upsert-covertype")]
         [ValidateAntiForgeryToken]
         /*writes a unique value to a http only cookie and same value is returned to the form. After the
          * page is submitted, an error is raised when this value doesn't match with the form value. 
@@ -72,14 +72,14 @@ namespace BookStore.Areas.Admin.Controllers
 
         #region API CALLS
 
-        [HttpGet]
+        [HttpGet("get-all-covertype")]
         public IActionResult GetAll() //used in coverType.js(created after creating index view)
         {
             var allObj = _unitOfWork.StoredProcedureCall.List<CoverType>(
                 StaticDetails.ProcGetAllCoverType,null);//add static details(like all procedure names in utilities)
             return Json(new { data = allObj });
         }
-        [HttpDelete]
+        [HttpDelete("delete-covertype")]
         public IActionResult Delete(int id)
         {
             var parameter = new DynamicParameters();//using Dapper
