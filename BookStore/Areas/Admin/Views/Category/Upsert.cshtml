@@ -1,0 +1,52 @@
+﻿@model BookStoreModels.Category
+<!--the view returns a category (see Index Action method Upsert in Category controller-->
+<!--Same page for create and edit category-->
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var title = "Create Category"; //default
+}
+<form method="post">
+    <div class="row p-3 border">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @if (Model.Id != 0)
+        {
+            //edit
+            title = "Edit Category";
+        }
+        <div class="col-12 border-bottom">
+            <h2 class="text-primary">@title</h2>
+        </div>
+        <div class="col-8 pt-4">
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Name"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                    <!--incorporates all server side validations given in our Category.cs model-->
+                    <!--validation won't get displayed unless you give client side validations which
+                        gets viewed by the user-->
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-8 offset-4">
+                    <!--Edit and Back functionalities are common for many pages. So we create a
+                        partial view for these. Views/Shared/add mvc view(CreateAndBackToListButton)partial view -->
+                    @if (Model.Id != 0)
+                    {
+                        <partial name="_EditAndBackToListButton" model="Model.Id" />
+                    }
+                    else
+                    {
+                        <partial name="_CreateAndBackToListButton" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!--client side validations-->
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}
