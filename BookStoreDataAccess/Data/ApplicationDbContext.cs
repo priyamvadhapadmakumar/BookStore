@@ -17,5 +17,7 @@ namespace BookStoreDataAccess.Data
             * file already created -AddCategoryToDb and add a new migration file so the newly created 
             * migration file gets populated with changes and then update database*/
         public DbSet<CoverType> CoverTypes { get; set; }
+        public DbSet<Book> Books { get; set; }
+
     }
 }

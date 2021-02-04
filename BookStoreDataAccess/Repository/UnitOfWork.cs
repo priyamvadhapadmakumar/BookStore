@@ -14,11 +14,13 @@ namespace BookStoreDataAccess.Repository
             _db = db;
             Category = new CategoryRepository(_db);
             CoverType = new CoverTypeRepository(_db);
+            Book = new BookRepository(_db);
             StoredProcedureCall = new StoredProcedureCall(_db);
         }
 
         public ICategoryRepository Category { get; private set; }
         public ICoverTypeRepository CoverType { get; private set; }
+        public IBookRepository Book { get; private set; }
         public IStoredProcedureCall StoredProcedureCall { get; private set; }
 
         public void Dispose()
@@ -27,10 +29,8 @@ namespace BookStoreDataAccess.Repository
         }
         
         /*in our common repository (Repository.cs), all the changes made by each of the methods are not
-         * explicitly saved inside respective methods. They just perform the changes. When you look at
-         * CategoryRepository.cs we have Update method where there is a explicit Save method within which
-         * saves all changes made in the db. So to save all other changes to our db, we have this Save method
-         * in this UnitOfWork*/
+         * explicitly saved inside respective methods. They just perform the changes. 
+         * So to save all other changes to our db, we have this Save method in this UnitOfWork*/
         public void Save()
         {
             _db.SaveChanges();

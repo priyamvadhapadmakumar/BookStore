@@ -29,6 +29,7 @@ namespace BookStore
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        //Mainly to configure dependency configuration
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -55,6 +56,7 @@ namespace BookStore
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        //add middlewares to project. Order of middleswares is very important. 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -69,7 +71,7 @@ namespace BookStore
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles(); //because of this, we can use wwwroot folder files in app. Even images can be added
 
             app.UseRouting();
 

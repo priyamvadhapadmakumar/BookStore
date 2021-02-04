@@ -31,8 +31,11 @@ namespace BookStore.Areas.Admin.Controllers
                 return View(coverType);
             }
             //for edit
-            coverType = _unitOfWork.CoverType.Get(id.GetValueOrDefault()); ;
-            //id.GetValueOrDefault and not .Get because the given id can be null/ something that isn't on db
+            var parameter = new DynamicParameters();//using Dapper
+            parameter.Add("@id", id);
+            coverType = _unitOfWork.StoredProcedureCall.OneRecord<CoverType>(
+                StaticDetails.ProcGetCoverType,parameter);
+            
             if(coverType == null)
             {
                 return NotFound();
@@ -40,7 +43,7 @@ namespace BookStore.Areas.Admin.Controllers
             return View(coverType);//view coverType that was retreived from db for the given id
         }
 
-        [HttpPost("upsert-covertype")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         /*writes a unique value to a http only cookie and same value is returned to the form. After the
          * page is submitted, an error is raised when this value doesn't match with the form value. 
@@ -53,15 +56,16 @@ namespace BookStore.Areas.Admin.Controllers
                 //double security feature
             {
                 var parameter = new DynamicParameters();
-                parameter.Add("@Name", coverType.Name);
-                if(coverType.Id==0)
+                parameter.Add("@Name", coverType.Name);//to create, in our stored procedure, we give name as parameter
+                if(coverType.Id==0) 
                 {
                     _unitOfWork.StoredProcedureCall.Execute(StaticDetails.ProcCreateCoverType,parameter);
                     
                 }
-                else
+                else //to update, we update using id
                 {
-                    _unitOfWork.CoverType.Update(coverType);
+                    parameter.Add("@Id", coverType.Id);
+                    _unitOfWork.StoredProcedureCall.Execute(StaticDetails.ProcUpdateCoverType,parameter);
                     
                 }
                 _unitOfWork.Save();
@@ -72,20 +76,20 @@ namespace BookStore.Areas.Admin.Controllers
 
         #region API CALLS
 
-        [HttpGet("get-all-covertype")]
+        [HttpGet]
         public IActionResult GetAll() //used in coverType.js(created after creating index view)
         {
             var allObj = _unitOfWork.StoredProcedureCall.List<CoverType>(
                 StaticDetails.ProcGetAllCoverType,null);//add static details(like all procedure names in utilities)
             return Json(new { data = allObj });
         }
-        [HttpDelete("delete-covertype")]
+        [HttpDelete]
         public IActionResult Delete(int id)
         {
             var parameter = new DynamicParameters();//using Dapper
             parameter.Add("@id", id);
             var objFromDb = _unitOfWork.StoredProcedureCall.OneRecord<CoverType>(
-                StaticDetails.ProcDeleteCoverType, parameter);
+                StaticDetails.ProcGetCoverType, parameter);
             if(objFromDb == null)
             {
                 return Json(new { success = false, message = "Error while deleting" });

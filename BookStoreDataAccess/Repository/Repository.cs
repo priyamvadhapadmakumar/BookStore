@@ -29,7 +29,11 @@ namespace BookStoreDataAccess.Repository
             return dbSet.Find(id);
         }
 
-        public IEnumerable<T> GetAll(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = null)
+        /*includeProperties helps with foreign key references. The corresponding details of foreign key
+         * are automatically populated using this parameter. For eg: In Books.cs file, we have 
+         * foreign key set up and the correspoding models property are populated using this parameter*/
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, 
+            IOrderedQueryable<T>> orderBy = null, string includeProperties = null)
         {
             IQueryable<T> query = dbSet;
             if(filter != null)

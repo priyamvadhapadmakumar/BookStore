@@ -1,0 +1,139 @@
+﻿@model BookStoreModels.ViewModels.BookVM 
+<!--RECALL: Not Book model-->
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var title = "Create Book"; //default
+}
+<form method="post" enctype="multipart/form-data"> 
+    <!--enctype : for providing feature for uploading files(here, image)-->
+    <div class="row p-3 border">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @if (Model.Book.Id != 0)
+        {
+            //edit
+            title = "Edit Book";
+            <input type="hidden" asp-for="Book.Id" /> 
+            <!--just another way of getting input(id) for edit. Type is hidden cos we get input through partial
+                                                          shared view _editAndBackToList-->
+        }
+        <div class="col-12 border-bottom">
+            <h2 class="text-primary">@title</h2>
+        </div>
+        <div class="col-8 pt-4">
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Book.Title"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Book.Title" class="form-control" />
+                    <span asp-validation-for="Book.Title" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Book.ISBN"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Book.ISBN" class="form-control" />
+                    <span asp-validation-for="Book.ISBN" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Book.Price"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Book.Price" class="form-control" />
+                    <span asp-validation-for="Book.Price" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Book.Author"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Book.Author" class="form-control" />
+                    <span asp-validation-for="Book.Author" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Book.Description"></label>
+                </div>
+                <div class="col-8">
+                    <textarea asp-for="Book.Description" class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    Category
+                </div>
+                <div class="col-8">
+                    @Html.DropDownListFor(m => m.Book.CategoryId, Model.CategoryList, "-Choose a category", new { @class = "form-control" })
+                    <span asp-validation-for="Book.CategoryId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    CoverType
+                </div>
+                <div class="col-8">
+                    @Html.DropDownListFor(m => m.Book.CoverTypeId, Model.CoverTypeList, "-Choose a cover type", new { @class = "form-control" })
+                    <span asp-validation-for="Book.CoverTypeId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    Image
+                </div>
+                <div class="col-8">
+                    <input type="file" name="files" id="uploadBox" multiple class="form-control" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-8 offset-4">
+                    <!--Edit and Back functionalities are common for many pages. So we create a
+                        partial view for these. Views/Shared/add mvc view(CreateAndBackToListButton)partial view -->
+                    @if (Model.Book.Id != 0)
+                    {
+                        <partial name="_EditAndBackToListButton" model="Model.Book.Id" />
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <div class="col">
+                                <button type="submit" onclick="return validateInput()" class="btn btn-primary form-control">Create</button>
+                                <!--onclick - for validation of files - to check if user uploads image - validateInput()-js function-->
+                            </div>
+                            <div class="col">
+                                <a asp-action="Index" class="btn btn-success form-control">Back To List</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!--client side validations-->
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.tiny.cloud/1/yml643h6oljkefluo22nufy0cpak25g7m89l383re8vjxcrl/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <!--follow above website for model code-->
+    <!--For formatting the description textbox-->
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'lists',
+            menubar: 'file edit format'
+        });
+
+        function validateInput() {
+            if (document.getElementById("uploadBox").value = "") {
+                swal("Error", "Please select an image", "error");
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
