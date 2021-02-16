@@ -1,5 +1,6 @@
 ﻿using BookStoreDataAccess.Data;
 using BookStoreDataAccess.Repository.IRepository;
+using BookStoreModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,12 +16,16 @@ namespace BookStoreDataAccess.Repository
             Category = new CategoryRepository(_db);
             CoverType = new CoverTypeRepository(_db);
             Book = new BookRepository(_db);
+            Company = new CompanyRepository(_db);
+            ApplicationUser = new ApplicationUserRepository(_db);
             StoredProcedureCall = new StoredProcedureCall(_db);
         }
 
         public ICategoryRepository Category { get; private set; }
         public ICoverTypeRepository CoverType { get; private set; }
         public IBookRepository Book { get; private set; }
+        public ICompanyRepository Company { get; private set; }
+        public IApplicationUserRepository ApplicationUser { get; private set; }
         public IStoredProcedureCall StoredProcedureCall { get; private set; }
 
         public void Dispose()

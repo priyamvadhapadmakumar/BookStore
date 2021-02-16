@@ -1,4 +1,6 @@
-﻿using BookStoreModels.ViewModels;
+﻿using BookStoreDataAccess.Repository.IRepository;
+using BookStoreModels;
+using BookStoreModels.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,16 +15,19 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
+            _unitOfWork = unitOfWork;
         }
 
         //Since nothing defined, it is a [GET] action method
         public IActionResult Index()
         {
-            return View();
+            IEnumerable<Book> bookList = _unitOfWork.Book.GetAll(includeProperties: "Category,CoverType");
+            return View(bookList);
         }
 
         public IActionResult Privacy()

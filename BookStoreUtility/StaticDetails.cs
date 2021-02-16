@@ -11,5 +11,10 @@ namespace BookStoreUtility
         public const string ProcGetAllCoverType = "usp_GetCoverTypes";
         public const string ProcUpdateCoverType = "usp_UpdateCoverType";
         public const string ProcDeleteCoverType = "usp_DeleteCoverType";
+
+        public const string Role_User_Independent = "Independent Customers";
+        public const string Roler_User_Company = "Company Customer";
+        public const string Role_Admin = "Administrator";
+        public const string Role_Employee = "Employee";
     }
 }

@@ -7,15 +7,15 @@ $(document).ready(function () {
 function loadDataTable() {
     dataTable = $('#tblData').DataTable({
         "ajax": {
-            "url": "/Admin/Book/GetAll" 
+            "url": "/Admin/Book/GetAll"
         },
         "columns": [
-            { "data": "title", "width": "10%" },
-            { "data": "isbn", "width": "10%" },
-            { "data": "price", "width": "10%" },
-            { "data": "author", "width": "10%" },
-            { "data": "category.Name", "width": "10%" },
-
+            { "data": "title", "width": "15%" },
+            { "data": "author", "width": "15%" },
+            { "data": "isbn", "width": "15%" },
+            { "data": "category.name", "width": "15%" },
+            { "data": "coverType.name", "width": "15%" },
+            { "data": "price", "width": "15%" },
             {
                 "data": "id",
                 "render": function (data) {
@@ -23,19 +23,19 @@ function loadDataTable() {
                             <div class="text-center">
                                 <a href="/Admin/Book/Upsert/${data}" data-toggle="tooltip" title="Edit" 
                                    class="btn btn-success text-white" style="cursor:pointer">
-                                    <i class="fas fa-edit"></i> &nbsp;
+                                    <i class="fas fa-edit"></i>
                                 </a>
                                 <a onclick=Delete("/Admin/Book/Delete/${data}")
                                    data-toggle="tooltip" title="Delete"
                                    class="btn btn-danger text-white" style="cursor:pointer">
-                                    <i class="fas fa-trash-alt"></i> &nbsp;
+                                    <i class="fas fa-trash-alt"></i>
                                 </a>
                             </div>
-                       `;//semicolon must
-                }, "width": "40%"
+                       `;
+                }, "width": "10%"
             }
         ]
-    }); //semicolon - must (don't forget)
+    });
 }
 function Delete(url) {
     //using sweetAlert for alert messages

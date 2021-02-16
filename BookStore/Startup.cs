@@ -38,7 +38,10 @@ namespace BookStore
             services.AddDatabaseDeveloperPageExceptionFilter();
             /*Because we chose individual user authentication, it automatically created this service where
              * if any user signs up, the application requires email confirmation*/
-            services.AddDefaultIdentity<IdentityUser>()
+            /*Changed from addDefaultIdentity<IdentityUser> to 
+             * AddIdentity<IdentityUser,IdentityRole> to include Roles
+             */
+            services.AddIdentity<IdentityUser,IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddScoped<IUnitOfWork, UnitOfWork>(); /*these will be added to our project as a part of
                                                             * depedency injection*/

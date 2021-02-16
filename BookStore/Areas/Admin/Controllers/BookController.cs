@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BookStore.Areas.Admin.Controllers
 {
-    [Area("Admin")] //must add this
+    [Area("Admin")] 
     public class BookController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -25,16 +25,18 @@ namespace BookStore.Areas.Admin.Controllers
         }
         public IActionResult Index()
         {
-            return View(); //after this, create corresponding view
+            return View(); 
         }
         public IActionResult Upsert(int? id)
         {
+            /*Create a viewModel under BookStoreModels folder inside ViewModels folder. This view is
+             * custom for this Upsert action method*/
             BookVM bookVM = new BookVM() //Instance of Book view model(not Book) with its properties .
             {
                 Book = new Book(),
                 CategoryList =_unitOfWork.Category.GetAll().Select(i=>new SelectListItem
                 {
-                    Text = i.Name,
+                    Text = i.Name, //Text property of SelectListItem dropdown
                     Value = i.Id.ToString()
                 }),
                 CoverTypeList = _unitOfWork.CoverType.GetAll().Select(i => new SelectListItem
@@ -45,10 +47,7 @@ namespace BookStore.Areas.Admin.Controllers
             };
             if(id == null) //For creating new book
             {
-                return View(bookVM); /*DIFFERENCE: We don't create a corresponding model here but inside
-                                    * ViewModel folder inside Models folder because we need to add
-                                    * other class input components(like dropdown, list, stc.) for 
-                                    * Category and CoverType etc.*/
+                return View(bookVM);
             }
 
             //for edit
@@ -57,7 +56,7 @@ namespace BookStore.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            return View(bookVM.Book);
+            return View(bookVM);
         }
 
         [HttpPost]
@@ -87,7 +86,7 @@ namespace BookStore.Areas.Admin.Controllers
                     {
                         files[0].CopyTo(filesStreams);
                     }
-                    bookVm.Book.ImageUrl = @"\images\book" + fileName + extension;
+                    bookVm.Book.ImageUrl = @"\images\books\" + fileName + extension;
                 }
                 else
                 {
@@ -97,19 +96,37 @@ namespace BookStore.Areas.Admin.Controllers
                         Book objFromDb = _unitOfWork.Book.Get(bookVm.Book.Id);
                         bookVm.Book.ImageUrl = objFromDb.ImageUrl;
                     }
-                }
+                }//end 'if-else' for edit Book w or w/o changing image of book
+
                 if (bookVm.Book.Id == 0)
                 {
                     _unitOfWork.Book.Add(bookVm.Book);
 
-                }
+                } // creating new book. For image, we get through above if-else steps where we add new image.
                 else
                 {
                     _unitOfWork.Book.Update(bookVm.Book);
 
-                }
+                }//edit existing book. Depending on availability of new image, we update or use same old image (1st if-else block)
                 _unitOfWork.Save();
                 return RedirectToAction(nameof(Index));
+            }
+            else //if ModelState.IsNotValid--> Means no client side validations done. This block does server side validations
+            {
+                bookVm.CategoryList = _unitOfWork.Category.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name, //Text property of SelectListItem dropdown
+                    Value = i.Id.ToString()
+                });
+                bookVm.CoverTypeList = _unitOfWork.CoverType.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                });
+                if(bookVm.Book.Id!=0) //only for edit 
+                {
+                    bookVm.Book = _unitOfWork.Book.Get(bookVm.Book.Id);
+                }
             }
             return View(bookVm);//if validations not true, gives back original form to check inputs
         }
@@ -129,6 +146,12 @@ namespace BookStore.Areas.Admin.Controllers
             if(objFromDb == null)
             {
                 return Json(new { success = false, message = "Error while deleting" });
+            }
+            string webRootPath = _hostEnvironment.WebRootPath;
+            var imagePath = Path.Combine(webRootPath, objFromDb.ImageUrl.TrimStart('\\'));
+            if (System.IO.File.Exists(imagePath))
+            {
+                System.IO.File.Delete(imagePath);
             }
             _unitOfWork.Book.Remove(objFromDb);
             _unitOfWork.Save();

@@ -1,10 +1,10 @@
-﻿@model BookStoreModels.ViewModels.BookVM 
+﻿@model BookStoreModels.ViewModels.BookVM
 <!--RECALL: Not Book model-->
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     var title = "Create Book"; //default
 }
-<form method="post" enctype="multipart/form-data"> 
+<form method="post" enctype="multipart/form-data">
     <!--enctype : for providing feature for uploading files(here, image)-->
     <div class="row p-3 border">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -12,7 +12,7 @@
         {
             //edit
             title = "Edit Book";
-            <input type="hidden" asp-for="Book.Id" /> 
+            <input type="hidden" asp-for="Book.Id" />
             <!--just another way of getting input(id) for edit. Type is hidden cos we get input through partial
                                                           shared view _editAndBackToList-->
         }
@@ -113,11 +113,18 @@
                 </div>
             </div>
         </div>
+        @if (Model.Book.Id != 0)
+        {
+            <div class="col-3 offset-1 pt-4">
+                <img src="@Model.Book.ImageUrl" width="100%" style="border-radius:5px; border:1px solid #bbb9b9" />
+            </div>
+        }
     </div>
 </form>
 <!--client side validations-->
 @section Scripts{
     <partial name="_ValidationScriptsPartial" />
+
     <script src="https://cdn.tiny.cloud/1/yml643h6oljkefluo22nufy0cpak25g7m89l383re8vjxcrl/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
     <!--follow above website for model code-->
     <!--For formatting the description textbox-->
@@ -129,11 +136,11 @@
         });
 
         function validateInput() {
-            if (document.getElementById("uploadBox").value = "") {
+            if (document.getElementById("uploadBox").value == "") {
                 swal("Error", "Please select an image", "error");
                 return false;
             }
             return true;
-        }
+        };
     </script>
 }

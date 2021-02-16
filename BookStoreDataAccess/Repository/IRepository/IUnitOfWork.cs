@@ -9,6 +9,8 @@ namespace BookStoreDataAccess.Repository.IRepository
         ICategoryRepository Category { get; }
         ICoverTypeRepository CoverType { get; }
         IBookRepository Book { get; }
+        ICompanyRepository Company { get; }
+        IApplicationUserRepository ApplicationUser { get; }
         IStoredProcedureCall StoredProcedureCall { get; }
         void Save();
     }
