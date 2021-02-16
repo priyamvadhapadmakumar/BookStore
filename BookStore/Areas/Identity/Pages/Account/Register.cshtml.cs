@@ -26,10 +26,12 @@ namespace BookStore.Areas.Identity.Pages.Account
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly RoleManager<IdentityRole> _roleManager; //added to assign a admin
+        /*Add class that implements IEmailSender under StaticDetails so it doesn't throw an error.
+         * And configure Startup to use this service.*/
+        private readonly RoleManager<IdentityRole> _roleManager; //added to assign individual roles
         /*To configure RoleManager<IdentiyRole> so we can use it in our project,
          * Modify services.AddDefaultIdentity to services.AddIdentity<IdentityUser,IdentityRole>
-         */
+         * Or it throws an error*/
         private readonly IUnitOfWork _unitOfWork;//added to use StaticDetails file
 
         public RegisterModel(
@@ -136,7 +138,7 @@ namespace BookStore.Areas.Identity.Pages.Account
                     }
 
                     await _userManager.AddToRoleAsync(user, StaticDetails.Role_Admin);//for time being - sets 1st user as adminS
-
+                    //Creates tokens for default user. Now we changed to Startup config. So commented out
                     //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     //var callbackUrl = Url.Page(

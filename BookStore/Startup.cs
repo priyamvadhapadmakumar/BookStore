@@ -1,11 +1,13 @@
 using BookStoreDataAccess.Data;
 using BookStoreDataAccess.Repository;
 using BookStoreDataAccess.Repository.IRepository;
+using BookStoreUtility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,23 +41,22 @@ namespace BookStore
             /*Because we chose individual user authentication, it automatically created this service where
              * if any user signs up, the application requires email confirmation*/
             /*Changed from addDefaultIdentity<IdentityUser> to 
-             * AddIdentity<IdentityUser,IdentityRole> to include Roles
+             * AddIdentity<IdentityUser,IdentityRole>().AddDefaultTokenProviders to include Roles&tokens
              */
-            services.AddIdentity<IdentityUser,IdentityRole>()
+            services.AddIdentity<IdentityUser,IdentityRole>().AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddSingleton<IEmailSender, EmailSender>();
             services.AddScoped<IUnitOfWork, UnitOfWork>(); /*these will be added to our project as a part of
                                                             * depedency injection*/
             services.AddControllersWithViews();
-            /*Incase of .NET 3.1, 
-             * services.AddControllersWithViews().AddRazorRuntimeCompilation();to activate the feature
-             *services.AddRazorPages();to add IdentityClassLibrary which are razor pages and we
-             *need to add that manually here. But all these covered in .NET5.0 and above*/
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddRazorPages();
 
             //To test Bookstore controller APIs
-            services.AddSwaggerGen(s =>
-            { 
-                s.SwaggerDoc("v1", new OpenApiInfo { Title = "Bookstore API", Version = "v1" });
-            });
+            //services.AddSwaggerGen(s =>
+            //{ 
+            //    s.SwaggerDoc("v1", new OpenApiInfo { Title = "Bookstore API", Version = "v1" });
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -92,17 +93,17 @@ namespace BookStore
                 endpoints.MapRazorPages(); //for Razor pages
             });
 
-            var swaggerOptions = new SwaggerOptions();
-            Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
+            //var swaggerOptions = new SwaggerOptions();
+            //Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
 
-            app.UseSwagger(options =>
-            {
-                options.RouteTemplate = swaggerOptions.JsonRoute;
-            });
-            app.UseSwaggerUI(options =>
-            {
-                options.SwaggerEndpoint(swaggerOptions.UiEndpoint, swaggerOptions.Description);
-            });
+            //app.UseSwagger(options =>
+            //{
+            //    options.RouteTemplate = swaggerOptions.JsonRoute;
+            //});
+            //app.UseSwaggerUI(options =>
+            //{
+            //    options.SwaggerEndpoint(swaggerOptions.UiEndpoint, swaggerOptions.Description);
+            //});
         }
     }
 }
