@@ -14,11 +14,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
 namespace BookStore.Areas.Identity.Pages.Account
-{
+{ 
     [AllowAnonymous]
     public class RegisterModel : PageModel
     {
@@ -89,11 +90,28 @@ namespace BookStore.Areas.Identity.Pages.Account
             //[ForeignKey("CompanyId")] -- NOT NEEDED HERE 
             //public Company Company { get; set; } 
             public string Role { get; set; } //Individual roles are added in static details under Utility project
+            public IEnumerable<SelectListItem> CompaniesList { get; set; }//to property than binds to company dropdown on cshtml file
+            public IEnumerable<SelectListItem> RolesList { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
+            Input = new InputModel() //Setting the conditions for companies and roles dropdown in front end.
+            {
+                CompaniesList = _unitOfWork.Company.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                }),
+                RolesList = _roleManager.Roles.Where(u => u.Name != StaticDetails.Role_User_Independent).
+                Select(x=>x.Name).Select(i => new SelectListItem
+                {
+                    Text = i,
+                    Value = i
+                })
+
+            };
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
@@ -115,7 +133,7 @@ namespace BookStore.Areas.Identity.Pages.Account
                     PhoneNumber=Input.PhoneNumber,
                     Role=Input.Role
                 };
-                var result = await _userManager.CreateAsync(user, Input.Password); //creates user 
+                var result = await _userManager.CreateAsync(user, Input.Password); //creates user roles 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
@@ -136,8 +154,22 @@ namespace BookStore.Areas.Identity.Pages.Account
                     {
                         await _roleManager.CreateAsync(new IdentityRole(StaticDetails.Role_User_Independent));
                     }
+                    if(user.Role == null)
+                    {
+                        await _userManager.AddToRoleAsync(user, StaticDetails.Role_User_Independent);
+                    }
+                    else
+                    {
+                        if(user.CompanyId>0)
+                        {
+                            await _userManager.AddToRoleAsync(user, StaticDetails.Roler_User_Company);
+                        }
+                        await _userManager.AddToRoleAsync(user, user.Role);/*user.Role is the role
+                                                    * chosen by user from the dropdown list.
+                                                    * So no additional roles added.*/
+                    }
 
-                    await _userManager.AddToRoleAsync(user, StaticDetails.Role_Admin);//for time being - sets 1st user as adminS
+                    //await _userManager.AddToRoleAsync(user, StaticDetails.Role_Admin);//for time being - sets 1st user as admin
                     //Creates tokens for default user. Now we changed to Startup config. So commented out
                     //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     //code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -156,8 +188,18 @@ namespace BookStore.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        if(user.Role == null)
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                            return LocalRedirect(returnUrl);
+                        }
+                        else
+                        {
+                            //admin is registering a new user
+                            return RedirectToAction("Index", "User", new { Area = "Admin" });
+                            /*returns to admin area-index view and user controller*/
+                        }
+                        
                     }
                 }
                 foreach (var error in result.Errors)

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity; //for inheriting basic identiy provided by asp.netcore
+﻿using Microsoft.AspNetCore.Identity; //for inheriting basic identity provided by asp.netcore
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
