@@ -16,27 +16,38 @@ function loadDataTable() {
             { "data": "phoneNumber", "width": "15%" },
             { "data": "company.name", "width": "15%" },
             { "data": "role", "width": "15%" },
-            //{
-            //    "data": "id",
-            //    "render": function (data) {
-            //        //return `(tie operator) used to return a div
-            //        //first type the div portion in Index.cshtml to avoid spelling mistakes and check working
-            //        //href="Admin/Category/Upsert/id(where we pass the data)
-            //        return `
-            //                <div class="text-center">
-            //                    <a href="/Admin/Category/Upsert/${data}" data-toggle="tooltip" title="Edit" 
-            //                       class="btn btn-success text-white" style="cursor:pointer">
-            //                        <i class="fas fa-edit"></i> &nbsp;
-            //                    </a>
-            //                    <a onclick=Delete("/Admin/Category/Delete/${data}")
-            //                       data-toggle="tooltip" title="Delete"
-            //                       class="btn btn-danger text-white" style="cursor:pointer">
-            //                        <i class="fas fa-trash-alt"></i> &nbsp;
-            //                    </a>
-            //                </div>
-            //           `;//semicolon must
-            //    }, "width": "40%"
-            //}
+            {
+                /*account lock and unlock features - this property is provided by ASP.NETCore Entity Framework
+                 *under users Table (dbo.AspNetUsers table)- LockoutEnd property(column) : This sets the
+                 *date for which account remains locked*/
+                "data": {
+                    id: "id", lockoutEnd: "lockoutEnd"
+                },
+                "render": function (data) {
+                    var today = new Date().getTime();
+                    var lockout = new Date(data.lockoutEnd).getTime();
+                    if (lockout > today) {
+                        //user is currently locked. So we need to unlock
+                        return `
+                            <div class="text-center"
+                                <a onclick=LockUnlock('${data.id}') class="btn btn-danger text-white" style="cursor:pointer">
+                                    <i class="fas fa-lock-open"></i> Unlock
+                                </a>
+                            </div>
+                               `;
+                    }
+                    else {
+                        //user is currently unlocked. So we need to lock
+                        return `
+                            <div class="text-center"
+                                <a onclick=LockUnlock('${data.id}') class="btn btn-success-lock" style="cursor:pointer">
+                                    <i class="fas fa-lock"></i> Lock
+                                </a>
+                            </div>
+                               `;
+                    }
+                }, "width": "25%"
+            }
         ]
     }); //semicolon - must (don't forget)
 }
