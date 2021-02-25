@@ -197,7 +197,8 @@ namespace BookStore.Areas.Identity.Pages.Account
                         {
                             //admin is registering a new user
                             return RedirectToAction("Index", "User", new { Area = "Admin" });
-                            /*returns to admin area-index view and user controller*/
+                            /*returns to admin area-index view and user controller
+                             * This gives list of all users displayed to the admin*/
                         }
                         
                     }
