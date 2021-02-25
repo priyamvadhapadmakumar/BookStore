@@ -64,7 +64,8 @@
                 <div class="form-group">
                     <label asp-for="Input.Role"></label>
                     @Html.DropDownListFor(m => m.Input.Role, Model.Input.RolesList, 
-                   "Please select a role", new { @class = "form-control" })
+                   "Please select a role", new { @class = "form-control" }) 
+                    <!--hover over DropDownListFor() to understand method parameters-->
                 </div>
                 <div class="form-group">
                     <label asp-for="Input.CompanyId"></label>

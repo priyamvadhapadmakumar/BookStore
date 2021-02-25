@@ -41,7 +41,7 @@ namespace BookStore.Areas.Admin.Controllers
                 var roleId = userRole.FirstOrDefault(userRole => userRole.UserId == user.Id).RoleId;
                 /*from userRole table, we check  if the user from the userList(variable sent inside loop)
                  * is present by checking the the user id in usertable and user id in userRoles table
-                 * If there's a match it gets the corresponding id or if not, a default value for id 
+                 * If there's a match it gets the corresponding Roleid from the userRoles table or if not, a default value for id 
                  * is set to roleId variable*/
                 user.Role = roles.FirstOrDefault(user => user.Id == roleId).Name; 
                 /*the unmapped property - Role : Sis not saved as column of user table in db 
@@ -51,7 +51,7 @@ namespace BookStore.Areas.Admin.Controllers
                 {
                     user.Company = new Company
                     {
-                        Name = ""
+                        Name = "" //or it will throw null reference error as this is a required field
                     };
                 }
 

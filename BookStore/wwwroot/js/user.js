@@ -6,39 +6,37 @@ $(document).ready(function () {
 });
 
 function loadDataTable() {
-    /*using table id from category Index view and 
-     * datatable.net software which we added to our project in _Layout.cshtml*/
     dataTable = $('#tblData').DataTable({
-        //DataTable will only be recongnized if we add the corresponding javascript ref in _Layout.cshtml
-        /*Refer https://skillcrush.com/blog/what-is-ajax/ for understanding ajax*/
         "ajax": {
-            "url": "/Admin/Category/GetAll" //Area/ControllerName/Action method or API
+            "url": "/Admin/User/GetAll" 
         },
         "columns": [
-            { "data": "name", "width": "60%" },
-            //naming inside datatable is lower camelcase. So, Name starts with 'n'
-            {
-                "data": "id",
-                //render 2 buttons/2 links(upsert and delete)
-                "render": function (data) {
-                    //return `(tie operator) used to return a div
-                    //first type the div portion in Index.cshtml to avoid spelling mistakes and check working
-                    //href="Admin/Category/Upsert/id(where we pass the data)
-                    return `
-                            <div class="text-center">
-                                <a href="/Admin/Category/Upsert/${data}" data-toggle="tooltip" title="Edit" 
-                                   class="btn btn-success text-white" style="cursor:pointer">
-                                    <i class="fas fa-edit"></i> &nbsp;
-                                </a>
-                                <a onclick=Delete("/Admin/Category/Delete/${data}")
-                                   data-toggle="tooltip" title="Delete"
-                                   class="btn btn-danger text-white" style="cursor:pointer">
-                                    <i class="fas fa-trash-alt"></i> &nbsp;
-                                </a>
-                            </div>
-                       `;//semicolon must
-                }, "width": "40%"
-            }
+            { "data": "name", "width": "15%" },
+            { "data": "email", "width": "15%" },
+            { "data": "phoneNumber", "width": "15%" },
+            { "data": "company.name", "width": "15%" },
+            { "data": "role", "width": "15%" },
+            //{
+            //    "data": "id",
+            //    "render": function (data) {
+            //        //return `(tie operator) used to return a div
+            //        //first type the div portion in Index.cshtml to avoid spelling mistakes and check working
+            //        //href="Admin/Category/Upsert/id(where we pass the data)
+            //        return `
+            //                <div class="text-center">
+            //                    <a href="/Admin/Category/Upsert/${data}" data-toggle="tooltip" title="Edit" 
+            //                       class="btn btn-success text-white" style="cursor:pointer">
+            //                        <i class="fas fa-edit"></i> &nbsp;
+            //                    </a>
+            //                    <a onclick=Delete("/Admin/Category/Delete/${data}")
+            //                       data-toggle="tooltip" title="Delete"
+            //                       class="btn btn-danger text-white" style="cursor:pointer">
+            //                        <i class="fas fa-trash-alt"></i> &nbsp;
+            //                    </a>
+            //                </div>
+            //           `;//semicolon must
+            //    }, "width": "40%"
+            //}
         ]
     }); //semicolon - must (don't forget)
 }
