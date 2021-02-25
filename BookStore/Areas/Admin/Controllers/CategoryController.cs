@@ -1,5 +1,7 @@
 ﻿using BookStoreDataAccess.Repository.IRepository;
 using BookStoreModels;
+using BookStoreUtility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 namespace BookStore.Areas.Admin.Controllers
 {
     [Area("Admin")] //must add this
+    [Authorize(Roles =StaticDetails.Role_Admin)] //Only admin can add/edit categories
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

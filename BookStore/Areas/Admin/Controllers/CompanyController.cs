@@ -1,5 +1,7 @@
 ﻿using BookStoreDataAccess.Repository.IRepository;
 using BookStoreModels;
+using BookStoreUtility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -8,7 +10,8 @@ using System.Threading.Tasks;
 
 namespace BookStore.Areas.Admin.Controllers
 {
-    [Area("Admin")] 
+    [Area("Admin")]
+    [Authorize(Roles = StaticDetails.Role_Admin +","+StaticDetails.Role_Employee)]
     public class CompanyController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

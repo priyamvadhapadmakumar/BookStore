@@ -1,6 +1,8 @@
 ﻿using BookStoreDataAccess.Data;
 using BookStoreDataAccess.Repository.IRepository;
 using BookStoreModels;
+using BookStoreUtility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,6 +13,7 @@ using System.Threading.Tasks;
 namespace BookStore.Areas.Admin.Controllers
 {
     [Area("Admin")] //must add this
+    [Authorize(Roles = StaticDetails.Role_Admin +","+ StaticDetails.Role_Employee)]
     public class UserController : Controller
     {
         //private readonly IUnitOfWork _unitOfWork; - repository pattern  
@@ -57,6 +60,30 @@ namespace BookStore.Areas.Admin.Controllers
 
             }
             return Json(new { data = userList });
+        }
+        [HttpPost]
+        public IActionResult LockUnlock([FromBody] string id)
+        {
+            /*Apply the [FromBody] attribute to a parameter to populate 
+             * its properties from the body of an HTTP request - REFER below site
+             * https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding?view=aspnetcore-5.0
+             */
+            var objFromDb = _appDb.ApplicationUsers.FirstOrDefault(u => u.Id == id);
+            if (objFromDb == null)
+            {
+                return Json(new { success = false, message = "Error while Locking/Unlocking!" });
+            }
+            if (objFromDb.LockoutEnd != null && objFromDb.LockoutEnd > DateTime.Now)
+            {
+                //User is currently locked, so we will unlock them
+                objFromDb.LockoutEnd = DateTime.Now;
+            }
+            else
+            {
+                objFromDb.LockoutEnd = DateTime.Now.AddYears(500);
+            }
+            _appDb.SaveChanges();
+            return Json(new { success = true, message = "Action Successful!" });
         }
         #endregion
     }

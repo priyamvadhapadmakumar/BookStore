@@ -29,8 +29,9 @@ function loadDataTable() {
                     if (lockout > today) {
                         //user is currently locked. So we need to unlock
                         return `
-                            <div class="text-center"
-                                <a onclick=LockUnlock('${data.id}') class="btn btn-danger text-white" style="cursor:pointer">
+                            <div class="text-center">
+                                <a onclick=LockUnlock('${data.id}') class="btn btn-danger text-white" 
+                                    style="cursor:pointer; width:100px;">
                                     <i class="fas fa-lock-open"></i> Unlock
                                 </a>
                             </div>
@@ -39,8 +40,9 @@ function loadDataTable() {
                     else {
                         //user is currently unlocked. So we need to lock
                         return `
-                            <div class="text-center"
-                                <a onclick=LockUnlock('${data.id}') class="btn btn-success-lock" style="cursor:pointer">
+                            <div class="text-center">
+                                <a onclick=LockUnlock('${data.id}') class="btn btn-success text-white" 
+                                    style="cursor:pointer; width:100px;">
                                     <i class="fas fa-lock"></i> Lock
                                 </a>
                             </div>
@@ -51,29 +53,20 @@ function loadDataTable() {
         ]
     }); //semicolon - must (don't forget)
 }
-function Delete(url) {
-    //using sweetAlert for alert messages
-    swal({// see eg in https://sweetalert.js.org/guides/
-        title: "Are you sure you want to delete?",
-        text: "You will not be able to restore the data!",
-        icon: "warning",
-        buttons: true,
-        dangerMode: true
-    }).then((willDelete) => {
-        if (willDelete) {
-            $.ajax({
-                type: "DELETE",
-                url: url,
-                success: function (data) {
-                    if (data.success) {
-                        toastr.success(data.message);
-                        dataTable.ajax.reload();
-                    }
-                    else {
-                        toastr.error(data.message);
-                    }
-                }
-            });
+function LockUnlock(id) {
+    $.ajax({
+        type: "POST",
+        url: '/Admin/User/LockUnlock', //API Call
+        data: JSON.stringify(id),
+        contentType:"application/json",
+        success: function (data) {
+            if (data.success) {
+                toastr.success(data.message);
+                dataTable.ajax.reload();
+            }
+            else {
+                toastr.error(data.message);
+            }
         }
     });
 }

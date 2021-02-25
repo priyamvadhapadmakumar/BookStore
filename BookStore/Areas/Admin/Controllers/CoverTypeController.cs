@@ -2,6 +2,7 @@
 using BookStoreModels;
 using BookStoreUtility;
 using Dapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,8 @@ using System.Threading.Tasks;
 
 namespace BookStore.Areas.Admin.Controllers
 {
-    [Area("Admin")] //must add this
+    [Area("Admin")] 
+    [Authorize(Roles = StaticDetails.Role_Admin)]
     public class CoverTypeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
