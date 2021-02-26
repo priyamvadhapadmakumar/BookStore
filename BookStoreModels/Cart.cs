@@ -17,7 +17,7 @@ namespace BookStoreModels
         [Key]
         public int Id { get; set; }
         public string AppUserId { get; set; }
-        [ForeignKey("ApplicationUser")]
+        [ForeignKey("AppUserId")]
         public ApplicationUser ApplicationUser { get; set; }
         public string BookId { get; set; }
         [ForeignKey("BookId")]
