@@ -19,7 +19,7 @@ namespace BookStoreDataAccess.Repository
 
         public void Update(Category category)
         {
-            var objFromDb = _db.Cart.FirstOrDefault(s =>s.Id==category.Id);
+            var objFromDb = _db.Categories.FirstOrDefault(s =>s.Id==category.Id);
             /*Linq to retreive firstOrDefault. We use 's' as generic entity and for that entity we are
              * doing Id should match Category.Id. So this retrieves only one record with the condition. */
             if(objFromDb != null)

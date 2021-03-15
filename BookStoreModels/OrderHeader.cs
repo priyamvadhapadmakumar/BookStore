@@ -13,7 +13,7 @@ namespace BookStoreModels
         [Key]
         public int Id { get; set; }
         public string AppUserId { get; set; }
-        [ForeignKey("AppUserId")]
+        [ForeignKey("ApplicationUserId")]
         public ApplicationUser ApplicationUser { get; set; }
         [Required]
         public DateTime OrderDate { get; set; }

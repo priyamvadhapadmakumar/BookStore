@@ -1,5 +1,6 @@
 ﻿@using BookStoreUtility
-<!DOCTYPE html>
+@using Microsoft.AspNetCore.Http <!--must add to retreive sessions-->
+@inject IHttpContextAccessor HttpContextAccessor 
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -59,6 +60,26 @@
                                 </div>
                             </li>
                         }
+                        @if (HttpContextAccessor.HttpContext.Session.GetInt32(StaticDetails.Session_Cart) != null)
+                        {
+                            <li style="color:white;">
+                                <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="nav-link">
+                                    @{
+                                        var count = HttpContextAccessor.HttpContext.Session.GetInt32(StaticDetails.Session_Cart);
+                                    }
+                                    <i class="fas fa-shopping-cart"></i> &nbsp; (@count)
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                        <li style="color:white;">
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-shopping-cart"></i> &nbsp; (0)
+                            </a>
+                        </li>
+                        }
+
 
                     </ul>
                     <!--Partial name tag helper denotes that we are adding partial view -->

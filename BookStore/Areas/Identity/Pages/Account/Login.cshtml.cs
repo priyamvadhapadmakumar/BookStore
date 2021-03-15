@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using BookStoreDataAccess.Repository.IRepository;
+using BookStoreUtility;
+using Microsoft.AspNetCore.Http;
 
 namespace BookStore.Areas.Identity.Pages.Account
 {
@@ -20,14 +23,19 @@ namespace BookStore.Areas.Identity.Pages.Account
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IEmailSender _emailSender;
+        private readonly IUnitOfWork _unitOfWork; //add this
 
         public LoginModel(SignInManager<IdentityUser> signInManager, 
             ILogger<LoginModel> logger,
-            UserManager<IdentityUser> userManager)
+            UserManager<IdentityUser> userManager,
+            IEmailSender emailSender,
+            IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _unitOfWork = unitOfWork;
         }
 
         [BindProperty]
@@ -84,6 +92,11 @@ namespace BookStore.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    //makes sure that when we log in we retreive any session left before logging out
+                    var user = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Email == Input.Email);
+                    int count = _unitOfWork.Cart.GetAll(u => u.AppUserId == user.Id).Count();
+                    HttpContext.Session.SetInt32(StaticDetails.Session_Cart, count);
+                    //set logout - logout razor page config too
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
