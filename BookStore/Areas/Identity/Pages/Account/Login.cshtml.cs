@@ -94,7 +94,7 @@ namespace BookStore.Areas.Identity.Pages.Account
                 {
                     //makes sure that when we log in we retreive any session left before logging out
                     var user = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Email == Input.Email);
-                    int count = _unitOfWork.Cart.GetAll(u => u.AppUserId == user.Id).Count();
+                    int count = _unitOfWork.Cart.GetAll(u => u.ApplicationUserId == user.Id).Count();
                     HttpContext.Session.SetInt32(StaticDetails.Session_Cart, count);
                     //set logout - logout razor page config too
                     _logger.LogInformation("User logged in.");

@@ -8,7 +8,7 @@ using System.Text;
 
 namespace BookStoreDataAccess.Repository
 {
-    public class CartRepository : Repository<Cart>, ICartRepository
+    public class CartRepository : Repository<ShoppingCart>, ICartRepository
     {
         private readonly ApplicationDbContext _db;
 
@@ -17,7 +17,7 @@ namespace BookStoreDataAccess.Repository
             _db = db;
         }
 
-        public void Update(Cart cart)
+        public void Update(ShoppingCart cart)
         {
             _db.Update(cart);
         }

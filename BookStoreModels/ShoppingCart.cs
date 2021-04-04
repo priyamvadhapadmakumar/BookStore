@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace BookStoreModels
 {
-    public class Cart
+    public class ShoppingCart
     {
-        public Cart()
+        public ShoppingCart()
         {
             Count = 1;
         }
         [Key]
         public int Id { get; set; }
-        public string AppUserId { get; set; }
+        public string ApplicationUserId { get; set; }
         [ForeignKey("ApplicationUserId")]
         public ApplicationUser ApplicationUser { get; set; }
         public int BookId { get; set; }

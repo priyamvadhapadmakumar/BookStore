@@ -68,9 +68,6 @@ namespace BookStoreDataAccess.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AppUserId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
@@ -86,7 +83,7 @@ namespace BookStoreDataAccess.Migrations
 
                     b.HasIndex("BookId");
 
-                    b.ToTable("Carts");
+                    b.ToTable("ShoppingCarts");
                 });
 
             modelBuilder.Entity("BookStoreModels.Category", b =>

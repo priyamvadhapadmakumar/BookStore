@@ -40,7 +40,7 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
             if(claim != null) //null if user hasn't logged in
             {
                 var count = _unitOfWork.Cart
-                    .GetAll(c => c.AppUserId == claim.Value)
+                    .GetAll(c => c.ApplicationUserId == claim.Value)
                     .ToList()
                     .Count();
 
@@ -54,7 +54,7 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
         {
             var bookFromDb = _unitOfWork.Book.
                 GetFirstOrDefault(u => u.Id == id, includeProperties: "Category,CoverType");
-            Cart cartObj = new Cart()
+            ShoppingCart cartObj = new ShoppingCart()
             {
                 Book = bookFromDb,
                 BookId = bookFromDb.Id
@@ -64,7 +64,7 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize] //can add to cart only if logged in. So only register users can order books.
-        public IActionResult Details(Cart cart)
+        public IActionResult Details(ShoppingCart cart)
         {
             cart.Id = 0;
             if(ModelState.IsValid)
@@ -72,10 +72,10 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
                 //then we will add to cart
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-                cart.AppUserId = claim.Value;
+                cart.ApplicationUserId = claim.Value;
 
-                Cart cartFromDb = _unitOfWork.Cart.GetFirstOrDefault(
-                    u => u.AppUserId == cart.AppUserId && u.BookId == cart.BookId,
+                ShoppingCart cartFromDb = _unitOfWork.Cart.GetFirstOrDefault(
+                    u => u.ApplicationUserId == cart.ApplicationUserId && u.BookId == cart.BookId,
                     includeProperties: "Book");
 
                 if(cartFromDb == null)
@@ -96,7 +96,7 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
                 _unitOfWork.Save();
 
                 var count = _unitOfWork.Cart
-                    .GetAll(c => c.AppUserId == cart.AppUserId)
+                    .GetAll(c => c.ApplicationUserId == cart.ApplicationUserId)
                     .ToList()
                     .Count();
 
@@ -109,7 +109,7 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
             {
                 var bookFromDb = _unitOfWork.Book.
                     GetFirstOrDefault(u => u.Id == cart.BookId, includeProperties: "Category,CoverType");
-                Cart cartObj = new Cart()
+                ShoppingCart cartObj = new ShoppingCart()
                 {
                     Book = bookFromDb,
                     BookId = bookFromDb.Id

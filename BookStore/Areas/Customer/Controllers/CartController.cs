@@ -35,7 +35,7 @@ namespace BookStore.Areas.Customer.Controllers
             ShoppingCartVM = new ShoppingCartViewModel()
             {
                 OrderHeader = new BookStoreModels.OrderHeader(),
-                CartList = _unitOfWork.Cart.GetAll(u=>u.AppUserId==claim.Value, includeProperties:"Book")
+                CartList = _unitOfWork.Cart.GetAll(u=>u.ApplicationUserId==claim.Value, includeProperties:"Book")
             };
             ShoppingCartVM.OrderHeader.OrderTotal = 0;
             ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.
@@ -53,7 +53,7 @@ namespace BookStore.Areas.Customer.Controllers
                 }
             }
 
-            return View();
+            return View(ShoppingCartVM);
         }
     }
 }

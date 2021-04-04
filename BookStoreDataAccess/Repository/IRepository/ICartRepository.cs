@@ -5,8 +5,8 @@ using System.Text;
 
 namespace BookStoreDataAccess.Repository.IRepository
 {
-    public interface ICartRepository : IRepository<Cart>
+    public interface ICartRepository : IRepository<ShoppingCart>
     {
-        void Update(Cart cart);
+        void Update(ShoppingCart cart);
     }
 }
