@@ -1,4 +1,4 @@
-﻿@model BookStoreModels.Cart
+﻿@model BookStoreModels.ShoppingCart
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -13,10 +13,6 @@
                 <div class="col-12 col-md-6">
                     <h1 class="text-primary">@Model.Book.Title</h1>
                     <p class="text-warning">by @Model.Book.Author</p>
-                </div>
-                <div class="col-12 col-md-6 text-md-right pt-4">
-                    <span class="badge badge-success pt-2" style="height:30px;">@Model.Book.CoverType.Name</span>
-                    <span class="badge badge-warning pt-2" style="height:30px;">@Model.Book.Category.Name</span>
                 </div>
             </div>
             <div class="card-body">

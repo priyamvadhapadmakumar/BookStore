@@ -19,7 +19,7 @@ namespace BookStoreDataAccess.Repository
 
         public void Update(Book book)
         {
-            var objFromDb = _db.Books.FirstOrDefault(s =>s.Id==book.Id);
+            var objFromDb = _db.Books.FirstOrDefault(s =>s.BookId==book.BookId);
             /*Linq to retreive firstOrDefault. We use 's' as generic entity and for that entity we are
              * doing Id should match Book.Id. So this retrieves only one record with the condition. */
             if(objFromDb != null)
@@ -34,8 +34,6 @@ namespace BookStoreDataAccess.Repository
                 objFromDb.Author = book.Author;
                 objFromDb.Description = book.Description;
                 objFromDb.Price = book.Price;
-                objFromDb.CategoryId = book.CategoryId;
-                objFromDb.CoverTypeId = book.CoverTypeId;
 
             }
             

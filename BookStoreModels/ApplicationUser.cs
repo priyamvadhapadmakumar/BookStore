@@ -16,9 +16,6 @@ namespace BookStoreModels
         public string City { get; set; }
         public string State { get; set; }
         public string PostalCode { get; set; }
-        public int? CompanyId { get; set; } //To make the foreign key a nullable field
-        [ForeignKey("CompanyId")]
-        public Company Company { get; set; }
         [NotMapped] //this property not pushed to DB
         public string Role { get; set; }
     }

@@ -36,17 +36,7 @@ namespace BookStore.Areas.Admin.Controllers
              * custom for this Upsert action method*/
             BookVM bookVM = new BookVM() //Instance of Book view model(not Book) with its properties .
             {
-                Book = new Book(),
-                CategoryList =_unitOfWork.Category.GetAll().Select(i=>new SelectListItem
-                {
-                    Text = i.Name, //Text property of SelectListItem dropdown
-                    Value = i.Id.ToString()
-                }),
-                CoverTypeList = _unitOfWork.CoverType.GetAll().Select(i => new SelectListItem
-                {
-                    Text = i.Name,
-                    Value = i.Id.ToString()
-                })
+                Book = new Book()
             };
             if(id == null) //For creating new book
             {
@@ -94,14 +84,14 @@ namespace BookStore.Areas.Admin.Controllers
                 else
                 {
                     //edit - image not changed
-                    if(bookVm.Book.Id != 0)
+                    if(bookVm.Book.BookId != 0)
                     {
-                        Book objFromDb = _unitOfWork.Book.Get(bookVm.Book.Id);
+                        Book objFromDb = _unitOfWork.Book.Get(bookVm.Book.BookId);
                         bookVm.Book.ImageUrl = objFromDb.ImageUrl;
                     }
                 }//end 'if-else' for edit Book w or w/o changing image of book
 
-                if (bookVm.Book.Id == 0)
+                if (bookVm.Book.BookId == 0)
                 {
                     _unitOfWork.Book.Add(bookVm.Book);
 
@@ -116,19 +106,9 @@ namespace BookStore.Areas.Admin.Controllers
             }
             else //if ModelState.IsNotValid--> Means no client side validations done. This block does server side validations
             {
-                bookVm.CategoryList = _unitOfWork.Category.GetAll().Select(i => new SelectListItem
+                if(bookVm.Book.BookId!=0) //only for edit 
                 {
-                    Text = i.Name, //Text property of SelectListItem dropdown
-                    Value = i.Id.ToString()
-                });
-                bookVm.CoverTypeList = _unitOfWork.CoverType.GetAll().Select(i => new SelectListItem
-                {
-                    Text = i.Name,
-                    Value = i.Id.ToString()
-                });
-                if(bookVm.Book.Id!=0) //only for edit 
-                {
-                    bookVm.Book = _unitOfWork.Book.Get(bookVm.Book.Id);
+                    bookVm.Book = _unitOfWork.Book.Get(bookVm.Book.BookId);
                 }
             }
             return View(bookVm);//if validations not true, gives back original form to check inputs
@@ -139,7 +119,7 @@ namespace BookStore.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll() 
         {
-            var allObj = _unitOfWork.Book.GetAll(includeProperties:"Category,CoverType");
+            var allObj = _unitOfWork.Book.GetAll();
             return Json(new { data = allObj });
         }
         [HttpDelete]

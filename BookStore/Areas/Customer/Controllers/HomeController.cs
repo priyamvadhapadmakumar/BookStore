@@ -30,41 +30,41 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
         //Since nothing defined, it is a [GET] action method
         public IActionResult Index()
         {
-            IEnumerable<Book> bookList = _unitOfWork.Book.GetAll(includeProperties: "Category,CoverType");
+            IEnumerable<Book> bookList = _unitOfWork.Book.GetAll();
 
             /*all the below lines of code makes sure that if a user logs out and
              * logs back in, the user is able to retrieve the session he left.
              * Like, the cart still has the books he added before logging out.*/
-            var claimsIdentity = (ClaimsIdentity)User.Identity; //To get user's identity with userid.
-            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-            if(claim != null) //null if user hasn't logged in
-            {
-                var count = _unitOfWork.Cart
-                    .GetAll(c => c.AppUserId == claim.Value)
-                    .ToList()
-                    .Count();
+            //var claimsIdentity = (ClaimsIdentity)User.Identity; //To get user's identity with userid.
+            //var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            //if(claim != null) //null if user hasn't logged in
+            //{
+            //    var count = _unitOfWork.ShoppingCart
+            //        .GetAll(c => c.ApplicationUserId == claim.Value)
+            //        .ToList()
+            //        .Count();
 
-                HttpContext.Session.SetInt32(StaticDetails.Session_Cart, count);
-            } /*after ensuring we update the session in our index page, 
-               * we need to configure logIn razor page too. */
+            //    HttpContext.Session.SetInt32(StaticDetails.Session_Cart, count);
+            //} /*after ensuring we update the session in our index page, 
+            //   * we need to configure logIn razor page too. */
 
             return View(bookList);
         }
         public IActionResult Details(int id)
         {
             var bookFromDb = _unitOfWork.Book.
-                GetFirstOrDefault(u => u.Id == id, includeProperties: "Category,CoverType");
-            Cart cartObj = new Cart()
+                GetFirstOrDefault(u => u.BookId == id);
+            ShoppingCart cartObj = new ShoppingCart()
             {
                 Book = bookFromDb,
-                BookId = bookFromDb.Id
+                BookId = bookFromDb.BookId
             };
             return View(cartObj);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize] //can add to cart only if logged in. So only register users can order books.
-        public IActionResult Details(Cart cart)
+        public IActionResult Details(ShoppingCart cart)
         {
             cart.Id = 0;
             if(ModelState.IsValid)
@@ -72,16 +72,16 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
                 //then we will add to cart
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-                cart.AppUserId = claim.Value;
+                cart.ApplicationUserId = claim.Value;
 
-                Cart cartFromDb = _unitOfWork.Cart.GetFirstOrDefault(
-                    u => u.AppUserId == cart.AppUserId && u.BookId == cart.BookId,
+                ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.GetFirstOrDefault(
+                    u => u.ApplicationUserId == cart.ApplicationUserId && u.BookId == cart.BookId,
                     includeProperties: "Book");
 
                 if(cartFromDb == null)
                 {
                     //no records exist in database for that book for that user. So add the cart to unit of work.
-                    _unitOfWork.Cart.Add(cart);
+                    _unitOfWork.ShoppingCart.Add(cart);
                 }
                 else
                 {
@@ -90,13 +90,13 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
 
                     /* even if we remove the below cart.update line, entity framework will track the items in db and 
                      * update automatically if we just increase the count */
-                    _unitOfWork.Cart.Update(cartFromDb);
+                    _unitOfWork.ShoppingCart.Update(cartFromDb);
                 }
 
                 _unitOfWork.Save();
 
-                var count = _unitOfWork.Cart
-                    .GetAll(c => c.AppUserId == cart.AppUserId)
+                var count = _unitOfWork.ShoppingCart
+                    .GetAll(c => c.ApplicationUserId == cart.ApplicationUserId)
                     .ToList()
                     .Count();
 
@@ -108,11 +108,11 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
             else
             {
                 var bookFromDb = _unitOfWork.Book.
-                    GetFirstOrDefault(u => u.Id == cart.BookId, includeProperties: "Category,CoverType");
-                Cart cartObj = new Cart()
+                    GetFirstOrDefault(u => u.BookId == cart.BookId);
+                ShoppingCart cartObj = new ShoppingCart()
                 {
                     Book = bookFromDb,
-                    BookId = bookFromDb.Id
+                    BookId = bookFromDb.BookId
                 };
                 return View(cartObj);
             }

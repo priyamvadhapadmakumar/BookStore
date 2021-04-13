@@ -8,11 +8,11 @@
     <!--enctype : for providing feature for uploading files(here, image)-->
     <div class="row p-3 border">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        @if (Model.Book.Id != 0)
+        @if (Model.Book.BookId != 0)
         {
             //edit
             title = "Edit Book";
-            <input type="hidden" asp-for="Book.Id" />
+            <input type="hidden" asp-for="Book.BookId" />
             <!--just another way of getting input(id) for edit. Type is hidden cos we get input through partial
                                                           shared view _editAndBackToList-->
         }
@@ -66,24 +66,6 @@
             </div>
             <div class="form-group row">
                 <div class="col-4">
-                    Category
-                </div>
-                <div class="col-8">
-                    @Html.DropDownListFor(m => m.Book.CategoryId, Model.CategoryList, "-Choose a category", new { @class = "form-control" })
-                    <span asp-validation-for="Book.CategoryId" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-4">
-                    CoverType
-                </div>
-                <div class="col-8">
-                    @Html.DropDownListFor(m => m.Book.CoverTypeId, Model.CoverTypeList, "-Choose a cover type", new { @class = "form-control" })
-                    <span asp-validation-for="Book.CoverTypeId" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="form-group row">
-                <div class="col-4">
                     Image
                 </div>
                 <div class="col-8">
@@ -94,9 +76,9 @@
                 <div class="col-8 offset-4">
                     <!--Edit and Back functionalities are common for many pages. So we create a
                         partial view for these. Views/Shared/add mvc view(CreateAndBackToListButton)partial view -->
-                    @if (Model.Book.Id != 0)
+                    @if (Model.Book.BookId != 0)
                     {
-                        <partial name="_EditAndBackToListButton" model="Model.Book.Id" />
+                        <partial name="_EditAndBackToListButton" model="Model.Book.BookId" />
                     }
                     else
                     {
@@ -113,7 +95,7 @@
                 </div>
             </div>
         </div>
-        @if (Model.Book.Id != 0)
+        @if (Model.Book.BookId != 0)
         {
             <div class="col-3 offset-1 pt-4">
                 <img src="@Model.Book.ImageUrl" width="100%" style="border-radius:5px; border:1px solid #bbb9b9" />

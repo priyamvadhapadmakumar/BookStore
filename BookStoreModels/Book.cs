@@ -9,7 +9,7 @@ namespace BookStoreModels
     public class Book
     {
         [Key]
-        public int Id { get; set; }
+        public int BookId { get; set; }
         [Required]
         public string Title { get; set; }
         public string Description { get; set; }
@@ -19,18 +19,5 @@ namespace BookStoreModels
         [Required]
         public double Price { get; set; }
         public string ImageUrl { get; set; }
-        [Required]
-        public int CategoryId { get; set; }
-        [ForeignKey("CategoryId")]
-        [Display(Name="Category Name")]
-        public Category Category { get; set; }//To establish a foreign key relation
-        /*automatically populated by the includeProperties parameter in GetFirstOrDefault and GetAll Methods 
-         * in our Repository.cs file*/
-        [Required]
-        public int CoverTypeId { get; set; }
-        [ForeignKey("CoverTypeId")]
-        [Display(Name="Cover Type")]
-        public CoverType CoverType { get; set; }
-
     }
 }

@@ -33,19 +33,13 @@ namespace BookStore.Areas.Customer.Controllers
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
             ShoppingCartVM = new ShoppingCartViewModel()
-            {
-                OrderHeader = new BookStoreModels.OrderHeader(),
-                CartList = _unitOfWork.Cart.GetAll(u=>u.AppUserId==claim.Value, includeProperties:"Book")
+            { 
+                CartList = _unitOfWork.ShoppingCart.GetAll(u=>u.ApplicationUserId==claim.Value, includeProperties:"Book")
             };
-            ShoppingCartVM.OrderHeader.OrderTotal = 0;
-            ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.
-                GetFirstOrDefault(u => u.Id == claim.Value, includeProperties: "Company"); //to fill app user
-
             //To populate ListCart
             foreach(var list in ShoppingCartVM.CartList)
             {
                 list.Price = list.Book.Price;
-                ShoppingCartVM.OrderHeader.OrderTotal += (list.Price * list.Count);
                 list.Book.Description = StaticDetails.ConvertToRawHtml(list.Book.Description);
                 if (list.Book.Description.Length>100)
                 {
