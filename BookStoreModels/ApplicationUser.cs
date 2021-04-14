@@ -7,6 +7,11 @@ using System.Text;
 
 namespace BookStoreModels
 {
+    public enum Role
+    {
+        Administrator,
+        IndependentCustomer
+    }
     public class ApplicationUser:IdentityUser
     { /*this adds some properties to already existing dbo.aspnetusers table in db 
        * which is created by default when creating this app*/
@@ -17,6 +22,6 @@ namespace BookStoreModels
         public string State { get; set; }
         public string PostalCode { get; set; }
         [NotMapped] //this property not pushed to DB
-        public string Role { get; set; }
+        public string Role { get; set; }        
     }
 }

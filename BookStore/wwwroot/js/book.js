@@ -16,7 +16,7 @@ function loadDataTable() {
             { "data": "isbn", "width": "15%" },
             { "data": "price", "width": "15%" },
             {
-                "data": "id",
+                "data": "bookId",
                 "render": function (data) {
                     return `
                             <div class="text-center">

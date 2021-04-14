@@ -2,6 +2,7 @@
 using BookStoreDataAccess.Repository.IRepository;
 using BookStoreModels;
 using BookStoreUtility;
+using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,29 @@ namespace BookStore.Areas.Admin.Controllers
         {
             return View(); 
         }
+        public IActionResult Edit(string id)
+        {
+            ApplicationUser appUser = _appDb.Find<ApplicationUser>(id);
+            if (appUser == null)
+            {
+                return NotFound();
+            }
+            return View(appUser);
+        }
+        //https://docs.microsoft.com/en-us/aspnet/mvc/overview/getting-started/getting-started-with-ef-using-mvc/updating-related-data-with-the-entity-framework-in-an-asp-net-mvc-application
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(ApplicationUser user)
+        {
+            if (ModelState.IsValid)
+            {
+                _appDb.ApplicationUsers.Update(user);
+                _appDb.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(user);
+        }
+
 
         #region API CALLS
 
@@ -54,6 +78,20 @@ namespace BookStore.Areas.Admin.Controllers
 
             }
             return Json(new { data = userList });
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(string id)
+        {
+            var objFromDb = _appDb.ApplicationUsers.Find(id);
+            if (objFromDb == null)
+            {
+                return Json(new { success = false, message = "Error while deleting" });
+            }
+            _appDb.ApplicationUsers.Remove(objFromDb);
+            _appDb.SaveChanges();
+            return Json(new { success = true, message = "Delete Successful" });
+
         }
         //[HttpPost]
         //public IActionResult LockUnlock([FromBody] string id)

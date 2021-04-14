@@ -1,13 +1,13 @@
-﻿@model int
+﻿@*@model int*@
 <div class=" row">
     <div class="col">
-        <button type="submit" class="btn btn-primary form-control" asp-route-id="@Model">Update</button>
+        <button type="submit" class="btn btn-success form-control" asp-route-id="@Model">Update</button>
         <!--For edit, we pass id in our route. Here, the id is integer and
             this is the model which gets returned by the view-->
         <!--button type='submit' for upsert.cshtml view form method = post -->
     </div>
     <div class="col">
-        <a asp-action="Index" class="btn btn-success form-control">Back To List</a>
+        <a asp-action="Index" class="btn btn-primary form-control">Back To List</a>
     </div>
 
 </div>
