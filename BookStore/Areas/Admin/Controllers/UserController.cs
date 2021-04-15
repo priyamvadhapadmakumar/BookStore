@@ -17,12 +17,13 @@ namespace BookStore.Areas.Admin.Controllers
     [Authorize(Roles = StaticDetails.Role_Admin)]
     public class UserController : Controller
     {
-        //private readonly IUnitOfWork _unitOfWork; - repository pattern  
+        private readonly IUnitOfWork _unitOfWork; //- repository pattern  
         private readonly ApplicationDbContext _appDb; //connection through applicationDb
         /*Usually it is bad practice to combine both technologies in a project.
          * However, for self-learning and practice, doing both in this*/
-        public UserController(ApplicationDbContext appDb)
+        public UserController(IUnitOfWork unitOfWork,ApplicationDbContext appDb)
         {
+            _unitOfWork = unitOfWork;
             _appDb = appDb;
         }
         public IActionResult Index()
@@ -31,7 +32,7 @@ namespace BookStore.Areas.Admin.Controllers
         }
         public IActionResult Edit(string id)
         {
-            ApplicationUser appUser = _appDb.Find<ApplicationUser>(id);
+            ApplicationUser appUser = _unitOfWork.ApplicationUser.Get(id);
             if (appUser == null)
             {
                 return NotFound();
@@ -45,8 +46,15 @@ namespace BookStore.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                _appDb.ApplicationUsers.Update(user);
-                _appDb.SaveChanges();
+                try
+                {
+                    _unitOfWork.ApplicationUser.Update(user);
+                    _unitOfWork.Save();
+                }
+                catch
+                {
+                    return RedirectToAction(nameof(Index));
+                }
                 return RedirectToAction(nameof(Index));
             }
             return View(user);

@@ -8,7 +8,7 @@ namespace BookStoreDataAccess.Repository.IRepository
 {
     public interface IRepository<T> where T :class //always IRepository is generic
     {
-        T Get(int id); //eg: getting record based on id, we retrieve a record from any table(eg: category)
+        T Get(int id); //eg: getting record based on id, we retrieve a record from any table
         IEnumerable<T> GetAll(
             Expression<Func<T, bool>> filter = null, //using Linq.Expressions; for including clauses like 'where'
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, //using system.Linq

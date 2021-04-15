@@ -28,6 +28,10 @@ namespace BookStoreDataAccess.Repository
         {
             return dbSet.Find(id);
         }
+        public T Get(string id)
+        {
+            return dbSet.Find(id);
+        }
 
         /*includeProperties helps with foreign key references. The corresponding details of foreign key
          * are automatically populated using this parameter. For eg: In Books.cs file, we have 
