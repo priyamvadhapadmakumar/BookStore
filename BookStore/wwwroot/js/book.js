@@ -31,7 +31,19 @@ function loadDataTable() {
                                 </a>
                             </div>
                        `;
-                }, "width": "10%"
+                }, "width": "15%"
+            },
+            {
+                "data": null,
+                "defaultContent":
+                    `<div class="text-center">
+                        <a href="/Admin/Book/Compare"
+                            class="btn btn-dark text-white">
+                            <i class="fas fa-hand-holding-usd"></i>
+                            Compare Price
+                        </a>
+                    </div>
+                    `,"width":"15%"
             }
         ]
     });

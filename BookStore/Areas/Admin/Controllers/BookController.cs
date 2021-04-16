@@ -114,6 +114,10 @@ namespace BookStore.Areas.Admin.Controllers
             return View(bookVm);//if validations not true, gives back original form to check inputs
         }
 
+        /**************************************************/
+        //ADD 'COMPARE' METHOD AS GET&POST METHODS / API CALLS
+        /**************************************************/
+
         #region API CALLS
 
         [HttpGet]
