@@ -54,7 +54,8 @@ namespace BookStore.Areas.Admin.Controllers //Created this controller with views
             }
 
             //Edit functionality
-            if(inventoryVM == null)
+            inventoryVM.Inventory = _unitOfWork.Inventory.Get(id.GetValueOrDefault());
+            if(inventoryVM.Inventory == null)
             {
                 return NotFound();
             }
@@ -92,7 +93,8 @@ namespace BookStore.Areas.Admin.Controllers //Created this controller with views
         {
             try
             {
-                var allObj = _unitOfWork.Inventory.GetAll();
+                var allObj = _unitOfWork.Inventory.GetAll(includeProperties:"Book");
+                //includePrperties - for Foreign key references
                 return Json(new { data = allObj });
             }
             catch(NullReferenceException ex)

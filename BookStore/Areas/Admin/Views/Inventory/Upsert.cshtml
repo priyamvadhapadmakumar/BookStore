@@ -22,7 +22,7 @@
         <div class="col-8 pt-4">
             <div class="form-group row">
                 <div class="col-4">
-                    Book
+                    <label asp-for="Inventory.Book.Title"></label>
                 </div>
                 <div class="col-8">
                     @Html.DropDownListFor(m => m.Inventory.BookId, Model.BookList, "-Select a Book",
