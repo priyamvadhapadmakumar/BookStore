@@ -12,9 +12,11 @@ namespace BookStoreModels
     {
         [Key]
         public int InventoryId { get; set; }
+        [Required]
         public int BookId { get; set; }
         [ForeignKey("BookId")]
         public Book Book { get; set; }
+        [Required]
         public int Count { get; set; }
     }
 }

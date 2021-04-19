@@ -9,6 +9,7 @@ namespace BookStoreDataAccess.Repository.IRepository
         IBookRepository Book { get; }
         IApplicationUserRepository ApplicationUser { get; }
         ICartRepository ShoppingCart { get; }
+        IInventoryRepository Inventory { get; }
         IStoredProcedureCall StoredProcedureCall { get; }
         void Save();
     }

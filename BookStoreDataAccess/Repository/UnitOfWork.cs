@@ -16,6 +16,7 @@ namespace BookStoreDataAccess.Repository
             Book = new BookRepository(_db);
             ApplicationUser = new ApplicationUserRepository(_db);
             ShoppingCart = new CartRepository(_db);
+            Inventory = new InventoryRepository(_db);
             StoredProcedureCall = new StoredProcedureCall(_db);
         }
 
@@ -23,6 +24,7 @@ namespace BookStoreDataAccess.Repository
         public IApplicationUserRepository ApplicationUser { get; private set; }
         public ICartRepository ShoppingCart { get; private set; }
         public IStoredProcedureCall StoredProcedureCall { get; private set; }
+        public IInventoryRepository Inventory { get; private set; }
 
         public void Dispose()
         {
