@@ -27,7 +27,8 @@
                                 <h5 class="text-muted pb-2">Price: @Model.Book.Price.ToString("C2")</h5>
                             </div>
                             <div class="row pl-2">
-                                <a class="btn btn-light" asp-action ="Compare" style="height:50px;">Compare Prices</a>
+                                <a class="btn btn-light" asp-action ="Compare" asp-route-id="@Model.Book.BookId" 
+                                   style="height:50px;">Compare Prices</a>
                             </div>
                             <div class="row pl-2">
                                 <p class="text-secondary">@Html.Raw(Model.Book.Description)</p>
