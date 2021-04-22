@@ -48,24 +48,24 @@
                             </li>
                         }
                         @*@if (HttpContextAccessor.HttpContext.Session.GetInt32(StaticDetails.Session_Cart) != null)
-                        {
+                            {
+                                <li style="color:white;">
+                                    <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="nav-link">
+                                        @{
+                                            var count = HttpContextAccessor.HttpContext.Session.GetInt32(StaticDetails.Session_Cart);
+                                        }
+                                        <i class="fas fa-shopping-cart"></i> &nbsp; (@count)
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
                             <li style="color:white;">
-                                <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="nav-link">
-                                    @{
-                                        var count = HttpContextAccessor.HttpContext.Session.GetInt32(StaticDetails.Session_Cart);
-                                    }
-                                    <i class="fas fa-shopping-cart"></i> &nbsp; (@count)
+                                <a href="#" class="nav-link">
+                                    <i class="fas fa-shopping-cart"></i> &nbsp; (0)
                                 </a>
                             </li>
-                        }
-                        else
-                        {
-                        <li style="color:white;">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-shopping-cart"></i> &nbsp; (0)
-                            </a>
-                        </li>
-                        }*@
+                            }*@
 
 
                     </ul>
@@ -80,6 +80,23 @@
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
+    </div>
+
+    <!--Bootstrap for using modal pop-up window in our application-->
+    <!--https://getbootstrap.com/docs/5.0/components/modal/-->
+    <!--*************DIDN'T WORK****************-->
+    <div class="modal" tabindex="-1" id="form-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5><!--title too gets updated dynamically-->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!--modal body text goes here that gets updated dynamically-->
+                </div>
+            </div>
+        </div>
     </div>
 
     <footer class="border-top footer text-white-50 bg-primary">

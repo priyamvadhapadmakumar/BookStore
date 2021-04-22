@@ -28,6 +28,7 @@
     <ProjectReference Include="..\BookStoreDataAccess\BookStoreDataAccess.csproj" />
     <ProjectReference Include="..\BookStoreModels\BookStoreModels.csproj" />
     <ProjectReference Include="..\BookStoreUtility\BookStoreUtility.csproj" />
+    <ProjectReference Include="..\MyWebScraper\BookStore.MyWebScraper.csproj" />
   </ItemGroup>
 
   <ItemGroup>

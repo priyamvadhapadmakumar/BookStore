@@ -1,4 +1,5 @@
-﻿using BookStoreDataAccess.Repository.IRepository;
+﻿using BookStore.MyWebScraper;
+using BookStoreDataAccess.Repository.IRepository;
 using BookStoreModels;
 using BookStoreModels.ViewModels;
 using BookStoreUtility;
@@ -118,6 +119,19 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
             }
             
             
+        }
+
+        public IActionResult Compare(int id)
+        {
+            var bookFromDb = _unitOfWork.Book.GetFirstOrDefault(u => u.BookId == id);
+            double bookPrice = bookFromDb.Price;
+            string isbn = bookFromDb.ISBN;
+
+            WebScraper webScraper = new WebScraper();
+
+            double compareBookPrice = WebScraper.GetPrice(isbn);
+
+            return View();
         }
 
         public IActionResult Privacy()
