@@ -34,16 +34,19 @@ function loadDataTable() {
                 }, "width": "15%"
             },
             {
-                "data": null,
-                "defaultContent":
-                    `<div class="text-center">
-                        <a href="/Admin/Book/Compare"
-                            class="btn btn-dark text-white">
-                            <i class="fas fa-hand-holding-usd"></i>
-                            Compare Price
-                        </a>
-                    </div>
-                    `,"width":"15%"
+                "data": "bookId",
+                "render": function (data) {
+                    return `
+                            <div class="text-center">
+                                <a href="/Customer/Home/Compare/${data}"
+                                    class="btn btn-dark text-white">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                    Compare Price
+                                </a>
+                            </div>
+                    `;
+                }, "width": "15%"
+                   
             }
         ]
     });

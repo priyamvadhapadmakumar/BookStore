@@ -34,27 +34,24 @@ namespace BookStore.Areas.Admin.Controllers
         {
             /*Create a viewModel under BookStoreModels folder inside ViewModels folder. This view is
              * custom for this Upsert action method*/
-            BookVM bookVM = new BookVM() //Instance of Book view model(not Book) with its properties .
-            {
-                Book = new Book()
-            };
+            Book book = new Book(); //Instance of Book view model(not Book) with its properties .
             if(id == null) //For creating new book
             {
-                return View(bookVM);
+                return View(book);
             }
 
             //for edit
-            bookVM.Book = _unitOfWork.Book.Get(id.GetValueOrDefault()); 
-            if(bookVM.Book == null)
+            book = _unitOfWork.Book.Get(id.GetValueOrDefault()); 
+            if(book == null)
             {
                 return NotFound();
             }
-            return View(bookVM);
+            return View(book);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Upsert(BookVM bookVm)
+        public IActionResult Upsert(Book book)
         {
             if (ModelState.IsValid)
             {
@@ -66,10 +63,10 @@ namespace BookStore.Areas.Admin.Controllers
                     var uploads = Path.Combine(webRootPath, @"images\books");
                     var extension = Path.GetExtension(files[0].FileName);
 
-                    if(bookVm.Book.ImageUrl != null)
+                    if(book.ImageUrl != null)
                     {
                         //edit - to remove old image
-                        var imagePath = Path.Combine(webRootPath, bookVm.Book.ImageUrl.TrimStart('\\'));
+                        var imagePath = Path.Combine(webRootPath, book.ImageUrl.TrimStart('\\'));
                         if(System.IO.File.Exists(imagePath))
                         {
                             System.IO.File.Delete(imagePath);
@@ -79,26 +76,26 @@ namespace BookStore.Areas.Admin.Controllers
                     {
                         files[0].CopyTo(filesStreams);
                     }
-                    bookVm.Book.ImageUrl = @"\images\books\" + fileName + extension;
+                    book.ImageUrl = @"\images\books\" + fileName + extension;
                 }
                 else
                 {
                     //edit - image not changed
-                    if(bookVm.Book.BookId != 0)
+                    if(book.BookId != 0)
                     {
-                        Book objFromDb = _unitOfWork.Book.Get(bookVm.Book.BookId);
-                        bookVm.Book.ImageUrl = objFromDb.ImageUrl;
+                        Book objFromDb = _unitOfWork.Book.Get(book.BookId);
+                        book.ImageUrl = objFromDb.ImageUrl;
                     }
                 }//end 'if-else' for edit Book w or w/o changing image of book
 
-                if (bookVm.Book.BookId == 0)
+                if (book.BookId == 0)
                 {
-                    _unitOfWork.Book.Add(bookVm.Book);
+                    _unitOfWork.Book.Add(book);
 
                 } // creating new book. For image, we get through above if-else steps where we add new image.
                 else
                 {
-                    _unitOfWork.Book.Update(bookVm.Book);
+                    _unitOfWork.Book.Update(book);
 
                 }//edit existing book. Depending on availability of new image, we update or use same old image (1st if-else block)
                 _unitOfWork.Save();
@@ -106,12 +103,12 @@ namespace BookStore.Areas.Admin.Controllers
             }
             else //if ModelState.IsNotValid--> Means no client side validations done. This block does server side validations
             {
-                if(bookVm.Book.BookId!=0) //only for edit 
+                if(book.BookId!=0) //only for edit 
                 {
-                    bookVm.Book = _unitOfWork.Book.Get(bookVm.Book.BookId);
+                    book = _unitOfWork.Book.Get(book.BookId);
                 }
             }
-            return View(bookVm);//if validations not true, gives back original form to check inputs
+            return View(book);//if validations not true, gives back original form to check inputs
         }
 
         /**************************************************/

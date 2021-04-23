@@ -1,4 +1,4 @@
-﻿@model BookStoreModels.ViewModels.BookVM
+﻿@model BookStoreModels.Book
 <!--RECALL: Not Book model-->
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,11 +8,11 @@
     <!--enctype : for providing feature for uploading files(here, image)-->
     <div class="row p-3 border">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        @if (Model.Book.BookId != 0)
+        @if (Model.BookId != 0)
         {
             //edit
             title = "Edit Book";
-            <input type="hidden" asp-for="Book.BookId" />
+            <input type="hidden" asp-for="BookId" />
             <!--just another way of getting input(id) for edit. Type is hidden cos we get input through partial
                                                           shared view _editAndBackToList-->
         }
@@ -22,46 +22,53 @@
         <div class="col-8 pt-4">
             <div class="form-group row">
                 <div class="col-4">
-                    <label asp-for="Book.Title"></label>
+                    <label asp-for="Title"></label>
                 </div>
                 <div class="col-8">
-                    <input asp-for="Book.Title" class="form-control" />
-                    <span asp-validation-for="Book.Title" class="text-danger"></span>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col-4">
-                    <label asp-for="Book.ISBN"></label>
+                    <label asp-for="ISBN"></label>
                 </div>
                 <div class="col-8">
-                    <input asp-for="Book.ISBN" class="form-control" />
-                    <span asp-validation-for="Book.ISBN" class="text-danger"></span>
+                    <input asp-for="ISBN" class="form-control" />
+                    <span asp-validation-for="ISBN" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col-4">
-                    <label asp-for="Book.Price"></label>
+                    <label asp-for="Price"></label>
                 </div>
                 <div class="col-8">
-                    <input asp-for="Book.Price" class="form-control" />
-                    <span asp-validation-for="Book.Price" class="text-danger"></span>
+                    <input asp-for="Price" class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row pl-2">
+                <div class="col-md-12 text-center">
+                    <a class="btn btn-light" asp-area="Customer" asp-controller="Home" asp-action="Compare" asp-route-id="@Model.BookId"
+                       style="height:40px;">Compare Prices</a>
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col-4">
-                    <label asp-for="Book.Author"></label>
+                    <label asp-for="Author"></label>
                 </div>
                 <div class="col-8">
-                    <input asp-for="Book.Author" class="form-control" />
-                    <span asp-validation-for="Book.Author" class="text-danger"></span>
+                    <input asp-for="Author" class="form-control" />
+                    <span asp-validation-for="Author" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col-4">
-                    <label asp-for="Book.Description"></label>
+                    <label asp-for="Description"></label>
                 </div>
                 <div class="col-8">
-                    <textarea asp-for="Book.Description" class="form-control"></textarea>
+                    <textarea asp-for="Description" class="form-control"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
@@ -75,10 +82,10 @@
             <div class="form-group row">
                 <div class="col-8 offset-4">
                     <!--Edit and Back functionalities are common for many pages. So we create a
-                        partial view for these. Views/Shared/add mvc view(CreateAndBackToListButton)partial view -->
-                    @if (Model.Book.BookId != 0)
+                partial view for these. Views/Shared/add mvc view(CreateAndBackToListButton)partial view -->
+                    @if (Model.BookId != 0)
                     {
-                        <partial name="_EditAndBackToListButton" model="Model.Book.BookId" />
+                        <partial name="_EditAndBackToListButton" model="Model.BookId" />
                     }
                     else
                     {
@@ -95,10 +102,10 @@
                 </div>
             </div>
         </div>
-        @if (Model.Book.BookId != 0)
+        @if (Model.BookId != 0)
         {
             <div class="col-3 offset-1 pt-4">
-                <img src="@Model.Book.ImageUrl" width="100%" style="border-radius:5px; border:1px solid #bbb9b9" />
+                <img src="@Model.ImageUrl" width="100%" style="border-radius:5px; border:1px solid #bbb9b9" />
             </div>
         }
     </div>
