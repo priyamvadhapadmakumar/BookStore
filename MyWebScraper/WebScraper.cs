@@ -50,6 +50,7 @@ namespace BookStore.MyWebScraper
 
             else
             {
+                //if book not found on amazon
                 return "0";
             }
         }

@@ -19,5 +19,7 @@ namespace BookStoreModels
         [Required]
         public double Price { get; set; }
         public string ImageUrl { get; set; }
+        [NotMapped]
+        public string AmazonPrice { get; set; } //For comparison purposes
     }
 }

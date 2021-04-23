@@ -125,16 +125,10 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
         {
             var bookFromDb = _unitOfWork.Book.GetFirstOrDefault(u => u.BookId == id);
 
-            Book bookFromAmazon = new Book();
             WebScraper webScraper = new WebScraper();
 
-            bookFromAmazon.Price = webScraper.GetPrice(bookFromDb.ISBN);
-
-            if(bookFromAmazon.Price == 0)
-            {
-                return View(); //CHANGE REQUIRED!!
-            }
-            return View(bookFromDb); //CHANGE REQUIRED!!
+            bookFromDb.AmazonPrice = webScraper.GetPrice(bookFromDb.ISBN).ToString();
+            return View(bookFromDb); 
         }
 
         public IActionResult Privacy()

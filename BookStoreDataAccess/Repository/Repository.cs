@@ -28,7 +28,7 @@ namespace BookStoreDataAccess.Repository
         {
             return dbSet.Find(id);
         }
-        public T Get(string id)
+        public T Get(string id) //overloaded Get method
         {
             return dbSet.Find(id);
         }
