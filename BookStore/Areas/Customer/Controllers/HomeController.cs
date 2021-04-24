@@ -55,6 +55,7 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
         {
             var bookFromDb = _unitOfWork.Book.
                 GetFirstOrDefault(u => u.BookId == id);
+            //creating a cart object to use it to add to shoppingCart just in case
             ShoppingCart cartObj = new ShoppingCart()
             {
                 Book = bookFromDb,
@@ -73,38 +74,73 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
                 //then we will add to cart
                 var claimsIdentity = (ClaimsIdentity)User.Identity;
                 var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-                cart.ApplicationUserId = claim.Value;
+                cart.ApplicationUserId = claim.Value; //claim.Vlaue property stores userId of the IdentityUser
 
+                //cartObjFromDb - obj of cart of specific user and specific book
                 ShoppingCart cartFromDb = _unitOfWork.ShoppingCart.GetFirstOrDefault(
                     u => u.ApplicationUserId == cart.ApplicationUserId && u.BookId == cart.BookId,
                     includeProperties: "Book");
 
-                if(cartFromDb == null)
+                /*booksFromCartDb - list of specific book irrespective of user. 
+                 * Used to calculate total count of specific book already in cart.
+                 * From this total count of specific book in cart, we can calculate
+                 * number of books left in inventory
+                 */
+                IEnumerable<ShoppingCart> booksFromCartDb = _unitOfWork.ShoppingCart.GetAll(
+                    b => b.BookId == cart.BookId, includeProperties: "Book");
+                //CHECK IF INVENTORY HAS REQUESTED NO. OF BOOKS
+                var books = booksFromCartDb.ToArray();
+                foreach (var book in books)
                 {
-                    //no records exist in database for that book for that user. So add the cart to unit of work.
-                    _unitOfWork.ShoppingCart.Add(cart);
+                    cartFromDb.SumCount += book.Count; //Calculates total count of specific book in cart irrespective of user
+                }
+
+                Inventory inventoryBook = _unitOfWork.Inventory.GetFirstOrDefault(u => u.BookId == cart.BookId);
+                if ((cartFromDb.SumCount + cart.Count) > inventoryBook.Count)
+                {
+                    cartFromDb.ErrorMessage = $"Specified Count exceeds count in our inventory." +
+                                            $"Only {inventoryBook.Count} books left!" +
+                                            $" Please order within the available range/ " +
+                                            $" item cannot be added to cart!";
+                    return RedirectToAction(nameof(Index)); /**********TRY DIRECTING TO A SEPERATE ERROR VIEW PAGE****/
                 }
                 else
                 {
-                    //if records exist in database, add cart count to cartfromdb count and update unit of work with cart.
-                    cartFromDb.Count += cart.Count;
+                    if (cartFromDb == null) /*if no record exists in cart for that particular user for that particular book,
+                                             * then we add the object to the cart*/
+                    {
+                        inventoryBook.Count -= cart.Count; //updating inventory with each cart order request
+                        _unitOfWork.Inventory.Update(inventoryBook);
 
-                    /* even if we remove the below cart.update line, entity framework will track the items in db and 
-                     * update automatically if we just increase the count */
-                    _unitOfWork.ShoppingCart.Update(cartFromDb);
-                }
+                        _unitOfWork.ShoppingCart.Add(cart);
+                    }
+                    else
+                    {
+                        /*if records exist in ShoppingCart db for that user for the chosen book, 
+                         * add the given count to cartfromdb count and update cart db.*/
+                        cartFromDb.Count += cart.Count; /*adding new cart obj count 
+                                                     * to dbCart obj count so it gets added properly*/
 
-                _unitOfWork.Save();
+                        inventoryBook.Count -= cart.Count; //updating inventory
+                        _unitOfWork.Inventory.Update(inventoryBook);
 
-                var count = _unitOfWork.ShoppingCart
-                    .GetAll(c => c.ApplicationUserId == cart.ApplicationUserId)
-                    .ToList()
-                    .Count();
+                        /* even if we remove the below cart.update line, entity framework will track the items in db and 
+                         * update automatically if we just increase the count */
+                        _unitOfWork.ShoppingCart.Update(cartFromDb);
+                    }
 
-                HttpContext.Session.SetInt32(StaticDetails.Session_Cart, count);
-                //var sessionCartObject = HttpContext.Session.GetObject<Cart>(StaticDetails.Session_Cart);
+                    _unitOfWork.Save();
 
-                return RedirectToAction(nameof(Index));
+                    var count = _unitOfWork.ShoppingCart
+                        .GetAll(c => c.ApplicationUserId == cart.ApplicationUserId)
+                        .ToList()
+                        .Count();
+
+                    // HttpContext.Session.SetInt32(StaticDetails.Session_Cart, count);
+                    //var sessionCartObject = HttpContext.Session.GetObject<Cart>(StaticDetails.Session_Cart);
+
+                    return RedirectToAction(nameof(Index));
+                }                
             }
             else
             {
@@ -116,9 +152,7 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
                     BookId = bookFromDb.BookId
                 };
                 return View(cartObj);
-            }
-            
-            
+            }    
         }
 
         public IActionResult Compare(int id)
@@ -128,6 +162,15 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
             WebScraper webScraper = new WebScraper();
 
             bookFromDb.AmazonPrice = webScraper.GetPrice(bookFromDb.ISBN).ToString();
+
+            if(bookFromDb.AmazonPrice.Equals("0"))
+            {
+                bookFromDb.FoundStatus = "Book not found on Amazon for comparison!";
+            }
+            else
+            {
+                bookFromDb.FoundStatus = "Book found on Amazon!";
+            }
             return View(bookFromDb); 
         }
 

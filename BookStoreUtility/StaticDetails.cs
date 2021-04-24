@@ -13,7 +13,7 @@ namespace BookStoreUtility
         public const string Session_Cart = "Cart Session";
 
         public static string ConvertToRawHtml(string source)
-        {
+        { //similar to html.Raw method 
             char[] array = new char[source.Length];
             int arrayIndex = 0;
             bool inside = false;

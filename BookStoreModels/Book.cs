@@ -21,5 +21,7 @@ namespace BookStoreModels
         public string ImageUrl { get; set; }
         [NotMapped]
         public string AmazonPrice { get; set; } //For comparison purposes
+        [NotMapped]
+        public string FoundStatus { get; set; }
     }
 }
