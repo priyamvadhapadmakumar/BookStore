@@ -31,6 +31,9 @@ namespace BookStoreModels
                                            * book with count more than that is available in our inventory*/
         [NotMapped]
         public double Price { get; set; }
+
+        [NotMapped]
+        public double OrderTotal { get; set; }
         [NotMapped]
         public string ErrorMessage { get;set; }
 

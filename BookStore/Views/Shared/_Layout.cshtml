@@ -1,6 +1,7 @@
 ﻿@using BookStoreUtility
 @using Microsoft.AspNetCore.Http <!--must add to retreive sessions-->
 @inject IHttpContextAccessor HttpContextAccessor 
+
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -47,7 +48,9 @@
                                 </div>
                             </li>
                         }
-                        @*@if (HttpContextAccessor.HttpContext.Session.GetInt32(StaticDetails.Session_Cart) != null)
+                        
+                        <!--TO CHECK FOR SESSIONS AFTER LOGGIN IN-->
+                        @if (HttpContextAccessor.HttpContext.Session.GetInt32(StaticDetails.Session_Cart) != null)
                             {
                                 <li style="color:white;">
                                     <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="nav-link">
@@ -58,16 +61,15 @@
                                     </a>
                                 </li>
                             }
-                            else
+                            else //if nothing available for user in shopping cart
                             {
                             <li style="color:white;">
                                 <a href="#" class="nav-link">
-                                    <i class="fas fa-shopping-cart"></i> &nbsp; (0)
+                                    <i class="fas fa-shopping-cart"></i> &nbsp; (0) <!--diplays 0 near shopping cart icon-->
                                 </a>
                             </li>
-                            }*@
-
-
+                            } <!--After this, set sessions as 0 after logout in LogOut.cs razor page 
+                                  so all session count gets reset after user logs out-->
                     </ul>
                     <!--Partial name tag helper denotes that we are adding partial view -->
                     <partial name="_LoginPartial" /> <!--LoginPartial file has Register and Log in styling-->

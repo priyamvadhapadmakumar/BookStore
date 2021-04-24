@@ -61,17 +61,18 @@ namespace BookStore
             });
 
             //configuring session options
-            // services.AddSession(options =>
-            //{
-            //    options.IdleTimeout = TimeSpan.FromMinutes(30);
-            //    options.Cookie.HttpOnly = true;
-            //    options.Cookie.IsEssential = true;
-            //});
+             services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
             //To test Bookstore controller APIs
-            //services.AddSwaggerGen(s =>
-            //{ 
-            //    s.SwaggerDoc("v1", new OpenApiInfo { Title = "Bookstore API", Version = "v1" });
-            //});
+            services.AddSwaggerGen(s =>
+            {
+                s.SwaggerDoc("v1", new OpenApiInfo { Title = "Bookstore API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,7 +94,7 @@ namespace BookStore
             app.UseStaticFiles(); //because of this, we can use wwwroot folder files in app. Even images can be added
 
             app.UseRouting();
-            //app.UseSession();//To add session into our project
+            app.UseSession(); //To add session into our project
 
             //Because we selected individual user account authentication, these 2 automatically created
             app.UseAuthentication();

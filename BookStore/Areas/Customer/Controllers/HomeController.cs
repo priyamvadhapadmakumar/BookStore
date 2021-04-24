@@ -36,17 +36,18 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
             /*all the below lines of code makes sure that if a user logs out and
              * logs back in, the user is able to retrieve the session he left.
              * Like, the cart still has the books he added before logging out.*/
-            //var claimsIdentity = (ClaimsIdentity)User.Identity; //To get user's identity with userid.
-            //var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-            //if(claim != null) //null if user hasn't logged in
-            //{
-            //    var count = _unitOfWork.ShoppingCart
-            //        .GetAll(c => c.ApplicationUserId == claim.Value)
-            //        .ToList()
-            //        .Count();
 
-            //    HttpContext.Session.SetInt32(StaticDetails.Session_Cart, count);
-            //} /*after ensuring we update the session in our index page, 
+            var claimsIdentity = (ClaimsIdentity)User.Identity; //To get user's identity with userid.
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            if (claim != null) //null if user hasn't logged in
+            {
+                var count = _unitOfWork.ShoppingCart
+                    .GetAll(c => c.ApplicationUserId == claim.Value)
+                    .ToList()
+                    .Count();
+
+                HttpContext.Session.SetInt32(StaticDetails.Session_Cart, count);
+            } /*after ensuring we update the session in our index page, 
             //   * we need to configure logIn razor page too. */
 
             return View(bookList);
@@ -136,7 +137,13 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
                         .ToList()
                         .Count();
 
-                    // HttpContext.Session.SetInt32(StaticDetails.Session_Cart, count);
+                    HttpContext.Session.SetInt32(StaticDetails.Session_Cart, count); 
+                    //SetInt32 - default otpion provided by ASP.NET CORE
+
+                    /*OR -- CUSTOM SESSION IMPLEMENTATION -
+                     * If we want to store anything apart from integer value in session, 
+                     * below code - cos GetObject & SetObject methods we created in sessionExtension are Generic types
+                     */
                     //var sessionCartObject = HttpContext.Session.GetObject<Cart>(StaticDetails.Session_Cart);
 
                     return RedirectToAction(nameof(Index));

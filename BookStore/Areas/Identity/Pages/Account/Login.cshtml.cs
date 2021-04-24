@@ -24,7 +24,7 @@ namespace BookStore.Areas.Identity.Pages.Account
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly IUnitOfWork _unitOfWork; //add this
+        private readonly IUnitOfWork _unitOfWork; //add this to implement sessions
 
         public LoginModel(SignInManager<IdentityUser> signInManager, 
             ILogger<LoginModel> logger,
@@ -93,9 +93,15 @@ namespace BookStore.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     //makes sure that when we log in we retreive any session left before logging out
-                    var user = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Email == Input.Email);
-                    int count = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == user.Id).Count();
-                   // HttpContext.Session.SetInt32(StaticDetails.Session_Cart, count);
+                    var user = _unitOfWork.ApplicationUser
+                        .GetFirstOrDefault(u => u.Email == Input.Email); //cos email is unique
+                    int count = _unitOfWork.ShoppingCart
+                        .GetAll(u => u.ApplicationUserId == user.Id)
+                        .Count(); //to get count of items in cart of that user
+                    HttpContext.Session.SetInt32(StaticDetails.Session_Cart, count);
+                    //After configuring all sessions - we need to add button(controller) in our layout to see this.
+                    
+
                     //set logout - logout razor page config too
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);

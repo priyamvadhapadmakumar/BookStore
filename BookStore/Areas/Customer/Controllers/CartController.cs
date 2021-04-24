@@ -35,19 +35,24 @@ namespace BookStore.Areas.Customer.Controllers
             ShoppingCartVM = new ShoppingCartViewModel()
             { 
                 CartList = _unitOfWork.ShoppingCart.GetAll(u=>u.ApplicationUserId==claim.Value, includeProperties:"Book")
+                //include properties - to show all books in cart object. Foreign key reference
             };
+            ShoppingCartVM.CartObject.OrderTotal = 0;            
+            
             //To populate ListCart
             foreach(var list in ShoppingCartVM.CartList)
             {
                 list.Price = list.Book.Price;
+                ShoppingCartVM.CartObject.OrderTotal += (list.Price * list.Count);
                 list.Book.Description = StaticDetails.ConvertToRawHtml(list.Book.Description);
                 if (list.Book.Description.Length>100)
                 {
+                    //displaying just 1st 100 characters of description on cart view
                     list.Book.Description = list.Book.Description.Substring(0, 99) + "...";
                 }
             }
 
-            return View();
+            return View(ShoppingCartVM);
         }
     }
 }

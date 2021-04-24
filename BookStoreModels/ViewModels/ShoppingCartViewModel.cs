@@ -8,6 +8,7 @@ namespace BookStoreModels.ViewModels
 {
     public class ShoppingCartViewModel
     {
+        public ShoppingCart CartObject { get; set; }
         public IEnumerable<ShoppingCart> CartList { get; set; } //to display list of items in cart
 
     }

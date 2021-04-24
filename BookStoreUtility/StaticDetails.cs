@@ -9,7 +9,7 @@ namespace BookStoreUtility
         public const string Role_Customer = "Independent Customer";
         public const string Role_Admin = "Administrator";
        
-
+        //session contains all of the objects that user adds to the shopping cart
         public const string Session_Cart = "Cart Session";
 
         public static string ConvertToRawHtml(string source)

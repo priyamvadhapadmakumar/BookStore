@@ -30,7 +30,7 @@ namespace BookStore.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
-            //HttpContext.Session.SetInt32(StaticDetails.Session_Cart, 0);//session cleared when logged out
+            HttpContext.Session.SetInt32(StaticDetails.Session_Cart, 0);//session cleared when logged out - count set to 0
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
             if (returnUrl != null)
