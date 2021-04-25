@@ -193,6 +193,20 @@ namespace BookStore.Areas.Identity.Pages.Account
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
+
+                //MUST ADD BELOW LINES OF CODE - OR APP THROWS A SEPERATE PAGE WITH ERROR DETAILS
+                //After getting error, we return the same register page w/ error message
+                Input = new InputModel() //Populating roles dropdown in front end.
+                                         //Input model because corresponding page(view) has an input model
+                {
+                    RolesList = _roleManager.Roles
+                                    .Select(x => x.Name)
+                                    .Select(i => new SelectListItem
+                                    {
+                                        Text = i,
+                                        Value = i
+                                    })
+                };
             }
 
             // If we got this far, something failed, redisplay form
