@@ -27,17 +27,28 @@
                                 <h5 class="text-muted pb-2">Price: @Model.Book.Price.ToString("C2")</h5>
                             </div>
                             <div class="row pl-2">
-                                <a class="btn btn-light" asp-action ="Compare" asp-route-id="@Model.Book.BookId" 
+                                <a class="btn btn-light" asp-action="Compare" asp-route-id="@Model.Book.BookId"
                                    style="height:50px;">Compare Prices</a>
                             </div>
                             <div class="row pl-2">
                                 <p class="text-secondary">@Html.Raw(Model.Book.Description)</p>
                                 <!--without html.raw(), it displays all html tags and other features available-->
                             </div>
-                            <div class="row pl-2">
-                                <div class="col-2 text-primary"><h4>Count</h4></div>
-                                <div class="col-10"><input class="form-control" asp-for="Count"/></div>
-                            </div>
+                            @if (!Model.Message.Equals("All sold!"))
+                            {
+                                <div class="row pl-2">
+                                    <div class="col-2 text-primary"><h4>Count</h4></div>
+                                    <div class="col-10"><input class="form-control" asp-for="Count" /></div>
+                                    <div class="col-4 text-danger"><h4>@Model.Message</h4></div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="row pl-2">
+                                    <div class="col-2 text-danger font-weight-bold"><h4>@Model.Message</h4></div>
+                                </div>
+                            }
+
                         </div>
                         <div class="col-12 col-lg-3 offset-lg-1 text-center">
                             <img src="@Model.Book.ImageUrl" width="100%" class="rounded" />

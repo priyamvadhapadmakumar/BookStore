@@ -55,6 +55,7 @@ namespace BookStore.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
+                Inventory inventoryBook = new Inventory();
                 string webRootPath = _hostEnvironment.WebRootPath;
                 var files = HttpContext.Request.Form.Files;
                 if(files.Count>0)
@@ -91,6 +92,10 @@ namespace BookStore.Areas.Admin.Controllers
                 if (book.BookId == 0)
                 {
                     _unitOfWork.Book.Add(book);
+                    _unitOfWork.Save();
+                    inventoryBook.BookId = book.BookId;//adding book to inventory
+                    inventoryBook.Count += 1; //initially adding 1 book then changing count through inventory controller
+                    _unitOfWork.Inventory.Add(inventoryBook);
 
                 } // creating new book. For image, we get through above if-else steps where we add new image.
                 else
@@ -110,10 +115,6 @@ namespace BookStore.Areas.Admin.Controllers
             }
             return View(book);//if validations not true, gives back original form to check inputs
         }
-
-        /**************************************************/
-        //ADD 'COMPARE' METHOD AS GET&POST METHODS / API CALLS
-        /**************************************************/
 
         #region API CALLS
 

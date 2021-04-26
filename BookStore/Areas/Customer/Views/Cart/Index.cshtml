@@ -18,7 +18,7 @@
                             Shopping Cart
                         </div>
                         <div class="col-6 text-right">
-                            <a asp-area="Customer" asp-controller="Home" asp-action="Index" 
+                            <a asp-area="Customer" asp-controller="Home" asp-action="Index"
                                class="btn btn-outline-info btn-sm">Continue Shopping</a>
                         </div>
                     </div>
@@ -32,21 +32,28 @@
                                 <div class="col-12 text-sm-center col-lg-6 text-lg-left">
                                     <h5><strong>@cartItem.Book.Title</strong></h5>
                                     <p><small>@cartItem.Book.Description</small></p>
+                                    <br />
+                                    <br />
+                                    <p><small class="text-danger">@cartItem.Message</small></p>
                                 </div>
                                 <div class="col-12 text-sm-center col-lg-5 text-lg-right row">
                                     <div class="col-4 text-md-right" style="padding-top:5px;">
                                         <h6><strong>$ @cartItem.Book.Price<span class="text-muted">x</span> @cartItem.Count </strong></h6>
                                     </div>
                                     <div class="col-6 col-sm-4 col-lg-6">
+                                        @if (cartItem.Message.Equals(""))//if inventory count of book > 0, we can add book to cart
+                                        {
+                                            <div class="float-right mx-1">
+                                                <a asp-action="plus" asp-route-cartId="@cartItem.Id" class="btn btn-primary">
+                                                    <i class="fas fa-plus"></i>
+                                                </a>
+                                            </div>
+                                        }
+
                                         <div class="float-right mx-1">
-                                            <a asp-action="plus" asp-route-cartId="@cartItem.Id" class="btn btn-primary">
-                                                <i class="fas fa-plus"></i>
-                                            </a>
-                                        </div>
-                                        <div class="float-right mx-1">
-                                             <a asp-action="minus" asp-route-cartId="@cartItem.Id" class="btn btn-danger">
+                                            <a asp-action="minus" asp-route-cartId="@cartItem.Id" class="btn btn-danger">
                                                 <i class="fas fa-minus"></i>
-                                             </a>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="col-2 col-sm-4 col-lg-2 text-right">
@@ -86,5 +93,9 @@
     else
     {
         <div>No items added to cart! The cart is empty! </div>
+        <div class="col-6 text-right">
+            <a asp-area="Customer" asp-controller="Home" asp-action="Index"
+               class="btn btn-outline-info btn-sm">Start Shopping</a>
+        </div>
     }
 </form>

@@ -54,13 +54,24 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
         }
         public IActionResult Details(int id)
         {
+            string message;
             var bookFromDb = _unitOfWork.Book.
                 GetFirstOrDefault(u => u.BookId == id);
+            var inventoryBook = _unitOfWork.Inventory.GetFirstOrDefault(i => i.BookId == id);
+            if(inventoryBook.Count == 0)
+            {
+                message = "All sold!";
+            }
+            else
+            {
+                message = $"Only {inventoryBook.Count} left!";
+            }
             //creating a cart object to use it to add to shoppingCart just in case
             ShoppingCart cartObj = new ShoppingCart()
             {
                 Book = bookFromDb,
-                BookId = bookFromDb.BookId
+                BookId = bookFromDb.BookId,
+                Message = message
             };
             return View(cartObj);
         }
@@ -82,81 +93,98 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
                     u => u.ApplicationUserId == cart.ApplicationUserId && u.BookId == cart.BookId,
                     includeProperties: "Book");
 
-                /*booksFromCartDb - list of specific book irrespective of user. 
-                 * Used to calculate total count of specific book already in cart.
-                 * From this total count of specific book in cart, we can calculate
-                 * number of books left in inventory
-                 */
-                IEnumerable<ShoppingCart> booksFromCartDb = _unitOfWork.ShoppingCart.GetAll(
-                    b => b.BookId == cart.BookId, includeProperties: "Book");
-                //CHECK IF INVENTORY HAS REQUESTED NO. OF BOOKS
-                var books = booksFromCartDb.ToArray();
-                foreach (var book in books)
-                {
-                    cartFromDb.SumCount += book.Count; //Calculates total count of specific book in cart irrespective of user
-                }
+                ///*booksFromCartDb - list of specific book irrespective of user. 
+                // * Used to calculate total count of specific book already in cart.
+                // * From this total count of specific book in cart, we can calculate
+                // * number of books left in inventory
+                // */
+                //IEnumerable<ShoppingCart> booksFromCartDb = _unitOfWork.ShoppingCart.GetAll(
+                //    b => b.BookId == cart.BookId, includeProperties: "Book");
+                //var books = booksFromCartDb.ToArray();
+                //if (books.Length!=0) //books already in ShoppingCart ordered by other users and/or current user
+                //{
+                //    foreach (var book in books)
+                //    {
+                //        cartFromDb.SumCount += book.Count; //Calculates total count of specific book in ShoppingcartDb irrespective of user
+                //    }                           
+                //}
+                //else //No one ordered that book before. So it's a new order in shopping cart.
+                //{
+                //    cartFromDb.SumCount = 0;
+                //}
 
-                Inventory inventoryBook = _unitOfWork.Inventory.GetFirstOrDefault(u => u.BookId == cart.BookId);
-                if ((cartFromDb.SumCount + cart.Count) > inventoryBook.Count)
+                Inventory inventoryBook = _unitOfWork.Inventory.GetFirstOrDefault(u => u.BookId == cart.BookId,includeProperties:"Book");
+
+                if(cartFromDb == null) //if user adds this book for the 1st time to his cart
                 {
-                    cartFromDb.ErrorMessage = $"Specified Count exceeds count in our inventory." +
-                                            $"Only {inventoryBook.Count} books left!" +
-                                            $" Please order within the available range/ " +
-                                            $" item cannot be added to cart!";
-                    return RedirectToAction(nameof(Index)); /**********TRY DIRECTING TO A SEPERATE ERROR VIEW PAGE****/
-                }
-                else
-                {
-                    if (cartFromDb == null) /*if no record exists in cart for that particular user for that particular book,
-                                             * then we add the object to the cart*/
+                    //CHECK IF INVENTORY HAS REQUESTED NO. OF BOOKS 
+                    if (inventoryBook.Count >= cart.Count) //inventory Has books
                     {
                         inventoryBook.Count -= cart.Count; //updating inventory with each cart order request
                         _unitOfWork.Inventory.Update(inventoryBook);
 
                         _unitOfWork.ShoppingCart.Add(cart);
                     }
-                    else
+                    else //inventory doesn't have requested no.of books to be added to cart
                     {
-                        /*if records exist in ShoppingCart db for that user for the chosen book, 
-                         * add the given count to cartfromdb count and update cart db.*/
-                        cartFromDb.Count += cart.Count; /*adding new cart obj count 
-                                                     * to dbCart obj count so it gets added properly*/
-
-                        inventoryBook.Count -= cart.Count; //updating inventory
-                        _unitOfWork.Inventory.Update(inventoryBook);
-
-                        /* even if we remove the below cart.update line, entity framework will track the items in db and 
-                         * update automatically if we just increase the count */
-                        _unitOfWork.ShoppingCart.Update(cartFromDb);
+                        ShoppingCart cartObj = new ShoppingCart()
+                        {
+                            Book = inventoryBook.Book,
+                            BookId = inventoryBook.BookId,
+                            Message = $"Please check your order count. Only {inventoryBook.Count} left!"
+                        };
+                        return View(cartObj);
                     }
 
-                    _unitOfWork.Save();
+                }
+                else //if user already has this book in his cart
+                {
+                    //CHECK IF INVENTORY HAS REQUESTED NO. OF BOOKS 
+                    if (cart.Count >= inventoryBook.Count)
+                    {
+                        ShoppingCart cartObj = new ShoppingCart()
+                        {
+                            Book = inventoryBook.Book,
+                            BookId = inventoryBook.BookId,
+                            Message = $"Please check your order count. Only {inventoryBook.Count} left!"
+                        };
+                        return View(cartObj);
+                    }
+                    else //inventory has books
+                    {
+                        inventoryBook.Count -= cart.Count;
+                        cartFromDb.Count += cart.Count;
+                    }
+                }
+                _unitOfWork.Save();
 
-                    var count = _unitOfWork.ShoppingCart
-                        .GetAll(c => c.ApplicationUserId == cart.ApplicationUserId)
-                        .ToList()
-                        .Count();
+                var count = _unitOfWork.ShoppingCart
+                    .GetAll(c => c.ApplicationUserId == cart.ApplicationUserId)
+                    .ToList()
+                    .Count();
 
-                    HttpContext.Session.SetInt32(StaticDetails.Session_Cart, count); 
-                    //SetInt32 - default otpion provided by ASP.NET CORE
+                HttpContext.Session.SetInt32(StaticDetails.Session_Cart, count);
+                //SetInt32 - default otpion provided by ASP.NET CORE
 
-                    /*OR -- CUSTOM SESSION IMPLEMENTATION -
-                     * If we want to store anything apart from integer value in session, 
-                     * below code - cos GetObject & SetObject methods we created in sessionExtension are Generic types
-                     */
-                    //var sessionCartObject = HttpContext.Session.GetObject<Cart>(StaticDetails.Session_Cart);
+                /*OR -- CUSTOM SESSION IMPLEMENTATION -
+                    * If we want to store anything apart from integer value in session, 
+                    * below code - cos GetObject & SetObject methods we created in sessionExtension are Generic types
+                    */
+                //var sessionCartObject = HttpContext.Session.GetObject<Cart>(StaticDetails.Session_Cart);
 
-                    return RedirectToAction(nameof(Index));
-                }                
+                return RedirectToAction(nameof(Index));               
             }
             else
             {
                 var bookFromDb = _unitOfWork.Book.
                     GetFirstOrDefault(u => u.BookId == cart.BookId);
+                Inventory inventoryBook = _unitOfWork.Inventory
+                    .GetFirstOrDefault(u => u.BookId == cart.BookId);
                 ShoppingCart cartObj = new ShoppingCart()
                 {
                     Book = bookFromDb,
-                    BookId = bookFromDb.BookId
+                    BookId = bookFromDb.BookId,
+                    Message = $"Only {inventoryBook.Count} left!"
                 };
                 return View(cartObj);
             }    
