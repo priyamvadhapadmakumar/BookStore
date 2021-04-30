@@ -2,6 +2,7 @@
 using BookStoreDataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -9,6 +10,15 @@ using System.Text;
 
 namespace BookStoreDataAccess.Repository
 {
+    /*repository - mediator between data and domain layers 
+     * acting as an in-memory collection of domain objects
+     */
+    /*
+     * minimizes duplication of queries
+     * easy transition to different framework
+     * easy for testing app
+     */
+
     public class Repository<T> : IRepository<T> where T : class
     {
         private readonly ApplicationDbContext _db; //To modify database
@@ -38,26 +48,26 @@ namespace BookStoreDataAccess.Repository
          * foreign key set up and the correspoding models property are populated using this parameter*/
         public IEnumerable<T> GetAll(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, 
             IOrderedQueryable<T>> orderBy = null, string includeProperties = null)
-        {
+        { 
             IQueryable<T> query = dbSet;
-            if(filter != null)
+            if (filter != null)
             {
                 query = query.Where(filter);
             }
-            if(includeProperties != null)
+            if (includeProperties != null)
             {
                 //for eager loading while using FK references
-                foreach(var includeProp in includeProperties.Split(new char[] { ','},
+                foreach (var includeProp in includeProperties.Split(new char[] { ',' },
                     StringSplitOptions.RemoveEmptyEntries))
                 {
                     query = query.Include(includeProp); //will include all properties seperated by a ','.
                 }
             }
-            if(orderBy != null)
+            if (orderBy != null)
             {
                 return orderBy(query).ToList();
             }
-            return query.ToList();
+            return query.ToList(); 
         }
 
         public T GetFirstOrDefault(Expression<Func<T, bool>> filter = null, string includeProperties = null)

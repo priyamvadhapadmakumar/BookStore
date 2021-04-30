@@ -7,6 +7,10 @@ using System.Text;
 
 namespace BookStoreDataAccess.Repository
 {
+    /* Unit of work - maintains list of objects 
+     * affected by business transactions and 
+     * coordinates writing changes to db
+     */
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _db;
@@ -36,7 +40,7 @@ namespace BookStoreDataAccess.Repository
          * So to save all other changes to our db, we have this Save method in this UnitOfWork*/
         public void Save()
         {
-            _db.SaveChanges();
+            _db.SaveChanges(); //always should be in Unit of work
         }
 
         /*after creating this UnitOfWork, we need make all these available to the project by adding them
