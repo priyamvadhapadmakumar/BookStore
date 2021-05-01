@@ -34,14 +34,14 @@
                                     <p><small>@cartItem.Book.Description</small></p>
                                     <br />
                                     <br />
-                                    <p><small class="text-danger">@cartItem.Message</small></p>
+                                    <p><small class="text-danger">@cartItem.InventoryMessage</small></p>
                                 </div>
                                 <div class="col-12 text-sm-center col-lg-5 text-lg-right row">
                                     <div class="col-4 text-md-right" style="padding-top:5px;">
                                         <h6><strong>$ @cartItem.Book.Price<span class="text-muted">x</span> @cartItem.Count </strong></h6>
                                     </div>
                                     <div class="col-6 col-sm-4 col-lg-6">
-                                        @if (cartItem.Message.Equals(""))//if inventory count of book > 0, we can add book to cart
+                                        @if (cartItem.InventoryMessage.Equals(""))//if inventory count of book > 0, we can add book to cart
                                         {
                                             <div class="float-right mx-1">
                                                 <a asp-action="plus" asp-route-cartId="@cartItem.Id" class="btn btn-primary">

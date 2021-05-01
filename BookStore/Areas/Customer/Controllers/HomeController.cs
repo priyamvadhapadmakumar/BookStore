@@ -55,9 +55,18 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
         public IActionResult Details(int id)
         {
             string message;
+            int count = 0;
             var bookFromDb = _unitOfWork.Book.
                 GetFirstOrDefault(u => u.BookId == id);
-            var inventoryBook = _unitOfWork.Inventory.GetFirstOrDefault(i => i.BookId == id);
+
+            var soldBooks = _unitOfWork.ShoppingCart.GetAll(b => b.BookId == id).ToList();
+            var soldBooksArray = soldBooks.ToArray();
+            foreach(ShoppingCart book in soldBooksArray)
+            {
+                count += book.Count;
+            }
+
+            var inventoryBook = _unitOfWork.Inventory.GetFirstOrDefault(i => i.BookId == id); 
             if(inventoryBook.Count == 0)
             {
                 message = "All sold!";
@@ -71,7 +80,8 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
             {
                 Book = bookFromDb,
                 BookId = bookFromDb.BookId,
-                Message = message
+                InventoryMessage = message,
+                CartMessage = $"{count} books sold!"
             };
             return View(cartObj);
         }
@@ -80,7 +90,7 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
         [Authorize] //can add to cart only if logged in. So only register users can order books.
         public IActionResult Details(ShoppingCart cart)
         {
-            cart.Id = 0;
+            cart.Id = 0; //initial - not logged in scenario
             if(ModelState.IsValid)
             {
                 //then we will add to cart
@@ -93,29 +103,9 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
                     u => u.ApplicationUserId == cart.ApplicationUserId && u.BookId == cart.BookId,
                     includeProperties: "Book");
 
-                ///*booksFromCartDb - list of specific book irrespective of user. 
-                // * Used to calculate total count of specific book already in cart.
-                // * From this total count of specific book in cart, we can calculate
-                // * number of books left in inventory
-                // */
-                //IEnumerable<ShoppingCart> booksFromCartDb = _unitOfWork.ShoppingCart.GetAll(
-                //    b => b.BookId == cart.BookId, includeProperties: "Book");
-                //var books = booksFromCartDb.ToArray();
-                //if (books.Length!=0) //books already in ShoppingCart ordered by other users and/or current user
-                //{
-                //    foreach (var book in books)
-                //    {
-                //        cartFromDb.SumCount += book.Count; //Calculates total count of specific book in ShoppingcartDb irrespective of user
-                //    }                           
-                //}
-                //else //No one ordered that book before. So it's a new order in shopping cart.
-                //{
-                //    cartFromDb.SumCount = 0;
-                //}
-
                 Inventory inventoryBook = _unitOfWork.Inventory.GetFirstOrDefault(u => u.BookId == cart.BookId,includeProperties:"Book");
 
-                if(cartFromDb == null) //if user adds this book for the 1st time to his cart
+                if(cartFromDb == null) //if user adds this book for the 1st time to his cart --prevents null reference error
                 {
                     //CHECK IF INVENTORY HAS REQUESTED NO. OF BOOKS 
                     if (inventoryBook.Count >= cart.Count) //inventory Has books
@@ -131,7 +121,7 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
                         {
                             Book = inventoryBook.Book,
                             BookId = inventoryBook.BookId,
-                            Message = $"Please check your order count. Only {inventoryBook.Count} left!"
+                            InventoryMessage = $"Please check your order count. Only {inventoryBook.Count} left!"
                         };
                         return View(cartObj);
                     }
@@ -146,7 +136,7 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
                         {
                             Book = inventoryBook.Book,
                             BookId = inventoryBook.BookId,
-                            Message = $"Please check your order count. Only {inventoryBook.Count} left!"
+                            InventoryMessage = $"Please check your order count. Only {inventoryBook.Count} left!"
                         };
                         return View(cartObj);
                     }
@@ -184,7 +174,7 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
                 {
                     Book = bookFromDb,
                     BookId = bookFromDb.BookId,
-                    Message = $"Only {inventoryBook.Count} left!"
+                    InventoryMessage = $"Only {inventoryBook.Count} left!"
                 };
                 return View(cartObj);
             }    
@@ -208,6 +198,25 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
             }
             return View(bookFromDb); 
         }
+
+        //public IActionResult TopSellers(int count)
+        //{
+        //    var bookFromDb = _unitOfWork.Book.GetFirstOrDefault(u => u.BookId == id);
+
+        //    WebScraper webScraper = new WebScraper();
+
+        //    bookFromDb.AmazonPrice = webScraper.GetPrice(bookFromDb.ISBN).ToString();
+
+        //    if (bookFromDb.AmazonPrice.Equals("0"))
+        //    {
+        //        bookFromDb.FoundStatus = "Book not found on Amazon for comparison!";
+        //    }
+        //    else
+        //    {
+        //        bookFromDb.FoundStatus = "Book found on Amazon!";
+        //    }
+        //    return View(bookFromDb);
+        //}
 
         public IActionResult Privacy()
         {

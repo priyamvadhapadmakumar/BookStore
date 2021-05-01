@@ -17,13 +17,13 @@
         <h5 class="text-muted">ISBN : @Model.ISBN</h5>
     </div>
     <div class="row pl-2">
-        <h5 class="text-primary">Our Price: @Model.Price</h5>
+        <h5 class="text-primary">Our Price: $ @Model.Price</h5>
     </div>
     <div class="row pl-2">
         <h5 class="text-primary">Status: @Model.FoundStatus</h5>
     </div>
     <div class="row pl-2">
-        <h5 class="text-primary">Amazon's Price: @Model.AmazonPrice</h5><br />
+        <h5 class="text-primary">Amazon's Price: $ @Model.AmazonPrice</h5><br />
         <p>
             <script>
             var urlPortion = "&s=relevanceexprank&Adv-Srch-Books-Submit.x=11&Adv-Srch-Books-Submit.y=13&unfiltered=1&ref=sr_adv_b";
@@ -32,6 +32,9 @@
             </script>
         </p>
 
+    </div>
+    <div class="col-12 col-lg-3 offset-lg-1 text-center">
+        <img src="@Model.ImageUrl" width="100%" class="rounded" />
     </div>
 </body>
 

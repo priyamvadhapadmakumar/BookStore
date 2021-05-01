@@ -55,11 +55,11 @@ namespace BookStore.Areas.Customer.Controllers
                 Inventory inventoryBook = _unitOfWork.Inventory.GetFirstOrDefault(b => b.BookId == bookItem.BookId);
                 if(inventoryBook.Count > 0)
                 {
-                    bookItem.Message = "";
+                    bookItem.InventoryMessage = "";
                 }
                 else
                 {
-                    bookItem.Message = "Inventory empty! No more item can be added!";
+                    bookItem.InventoryMessage = "Inventory empty! No more item can be added!";
                 }
                 bookItem.Price = bookItem.Book.Price;
                 ShoppingCartVM.CartObject.OrderTotal += (bookItem.Price * bookItem.Count);

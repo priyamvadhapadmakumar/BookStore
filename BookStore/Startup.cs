@@ -63,7 +63,7 @@ namespace BookStore
             {
                 options.AppId = "273849194384380";
                 options.AppSecret = "131e5186a7f4a99eff5be99c882564ab";
-            });
+            }); //add additional properties (based on register.cshtml.cs file) required in Identity->Pages->Account->ExternalLogin.cshtml.cs file
 
             //configuring session options
              services.AddSession(options =>

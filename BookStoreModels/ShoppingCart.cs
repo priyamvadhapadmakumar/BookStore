@@ -36,7 +36,9 @@ namespace BookStoreModels
         [NotMapped]
         public double OrderTotal { get; set; }
         [NotMapped]
-        public string Message { get;set; }
+        public string InventoryMessage { get;set; }
+        [NotMapped]
+        public string CartMessage { get; set; }
 
     }
 }

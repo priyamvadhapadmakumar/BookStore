@@ -33,6 +33,9 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="TopSellers">Best Sellers</a>
+                        </li>
 
                         @if (User.IsInRole(StaticDetails.Role_Admin))
                         {
@@ -49,7 +52,7 @@
                             </li>
                         }
 
-                        @if(User.IsInRole(StaticDetails.Role_Admin) || User.IsInRole(StaticDetails.Role_Customer))
+                        @if (User.IsInRole(StaticDetails.Role_Admin) || User.IsInRole(StaticDetails.Role_Customer))
                         {
                             <!--TO CHECK FOR SESSIONS AFTER LOGGIN IN-->
                             @if (HttpContextAccessor.HttpContext.Session.GetInt32(StaticDetails.Session_Cart) != null)
@@ -72,15 +75,17 @@
                                 </li>
                             }
                             <!--After this, set sessions as 0 after logout in LogOut.cs razor page
-                                so all session count gets reset after user logs out-->
+            so all session count gets reset after user logs out-->
                         }
                         else //user hasn't logged in. This prevents null exception error when user clicks on cart w/o logging in
                         {
                             <li style="color:white;">
-                                <a asp-area="Identity" asp-page="/Account/Login" class="nav-link"> <!--directs user to register/log in page -->
+                                <a asp-area="Identity" asp-page="/Account/Login" class="nav-link">
+                                    <!--directs user to register/log in page -->
                                     <i class="fas fa-shopping-cart"></i> &nbsp; (0) <!--diplays 0 near shopping cart icon-->
                                 </a>
-                            </li>   
+                            </li>
+
                         }
 
                     </ul>
