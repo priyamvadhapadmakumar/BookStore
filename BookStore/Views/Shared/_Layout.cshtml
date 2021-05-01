@@ -48,9 +48,11 @@
                                 </div>
                             </li>
                         }
-                        
-                        <!--TO CHECK FOR SESSIONS AFTER LOGGIN IN-->
-                        @if (HttpContextAccessor.HttpContext.Session.GetInt32(StaticDetails.Session_Cart) != null)
+
+                        @if(User.IsInRole(StaticDetails.Role_Admin) || User.IsInRole(StaticDetails.Role_Customer))
+                        {
+                            <!--TO CHECK FOR SESSIONS AFTER LOGGIN IN-->
+                            @if (HttpContextAccessor.HttpContext.Session.GetInt32(StaticDetails.Session_Cart) != null)
                             {
                                 <li style="color:white;">
                                     <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="nav-link">
@@ -63,13 +65,24 @@
                             }
                             else //if nothing available for user in shopping cart
                             {
+                                <li style="color:white;">
+                                    <a href="#" class="nav-link">
+                                        <i class="fas fa-shopping-cart"></i> &nbsp; (0) <!--diplays 0 near shopping cart icon-->
+                                    </a>
+                                </li>
+                            }
+                            <!--After this, set sessions as 0 after logout in LogOut.cs razor page
+                                so all session count gets reset after user logs out-->
+                        }
+                        else //user hasn't logged in. This prevents null exception error when user clicks on cart w/o logging in
+                        {
                             <li style="color:white;">
-                                <a href="#" class="nav-link">
+                                <a asp-area="Identity" asp-page="/Account/Login" class="nav-link"> <!--directs user to register/log in page -->
                                     <i class="fas fa-shopping-cart"></i> &nbsp; (0) <!--diplays 0 near shopping cart icon-->
                                 </a>
-                            </li>
-                            } <!--After this, set sessions as 0 after logout in LogOut.cs razor page 
-                                  so all session count gets reset after user logs out-->
+                            </li>   
+                        }
+
                     </ul>
                     <!--Partial name tag helper denotes that we are adding partial view -->
                     <partial name="_LoginPartial" /> <!--LoginPartial file has Register and Log in styling-->

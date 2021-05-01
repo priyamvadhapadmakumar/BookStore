@@ -59,6 +59,11 @@ namespace BookStore
                 options.LogoutPath = $"/Identity/Account/Logout";
                 options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             });
+            services.AddAuthentication().AddFacebook(options =>
+            {
+                options.AppId = "273849194384380";
+                options.AppSecret = "131e5186a7f4a99eff5be99c882564ab";
+            });
 
             //configuring session options
              services.AddSession(options =>
