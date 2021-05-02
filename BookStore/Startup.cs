@@ -51,6 +51,7 @@ namespace BookStore
             services.AddControllersWithViews();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddRazorPages();
+            services.AddHttpClient();
             //Refer https://docs.microsoft.com/en-us/aspnet/core/security/authentication/scaffold-identity?view=aspnetcore-5.0&tabs=visual-studio
             //To prevent unauthorized users from accessing content on page.
             services.ConfigureApplicationCookie(options =>

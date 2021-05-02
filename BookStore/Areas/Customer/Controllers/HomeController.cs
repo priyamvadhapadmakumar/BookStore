@@ -186,15 +186,15 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
 
             WebScraper webScraper = new WebScraper();
 
-            bookFromDb.AmazonPrice = webScraper.GetPrice(bookFromDb.ISBN).ToString();
+            bookFromDb.EbayPrice = webScraper.GetPrice(bookFromDb.ISBN).ToString();
 
-            if(bookFromDb.AmazonPrice.Equals("0"))
+            if(bookFromDb.EbayPrice.Equals("0"))
             {
-                bookFromDb.FoundStatus = "Book not found on Amazon for comparison!";
+                bookFromDb.FoundStatus = "Book not found on Ebay for comparison!";
             }
             else
             {
-                bookFromDb.FoundStatus = "Book found on Amazon!";
+                bookFromDb.FoundStatus = "Book found on Ebay!";
             }
             return View(bookFromDb); 
         }
