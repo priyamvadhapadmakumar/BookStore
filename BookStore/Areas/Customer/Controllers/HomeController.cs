@@ -199,24 +199,22 @@ namespace BookStore.Areas.Customer.Controllers //rename namespace based on the f
             return View(bookFromDb); 
         }
 
-        //public IActionResult TopSellers(int count)
-        //{
-        //    var bookFromDb = _unitOfWork.Book.GetFirstOrDefault(u => u.BookId == id);
-
-        //    WebScraper webScraper = new WebScraper();
-
-        //    bookFromDb.AmazonPrice = webScraper.GetPrice(bookFromDb.ISBN).ToString();
-
-        //    if (bookFromDb.AmazonPrice.Equals("0"))
-        //    {
-        //        bookFromDb.FoundStatus = "Book not found on Amazon for comparison!";
-        //    }
-        //    else
-        //    {
-        //        bookFromDb.FoundStatus = "Book found on Amazon!";
-        //    }
-        //    return View(bookFromDb);
-        //}
+       
+        public IActionResult TopSellers()
+        {
+            IEnumerable<BooksSold> items = _unitOfWork.StoredProcedureCall.List<BooksSold>(StaticDetails.Proc_BestSellingBooks); 
+            if(items == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            var itemsList = items.ToList();
+            foreach( var item in itemsList)
+            {
+                item.ImageUrl = _unitOfWork.Book.GetFirstOrDefault(b => b.Title == item.Title).ImageUrl;
+                item.BookId = _unitOfWork.Book.GetFirstOrDefault(i => i.Title == item.Title).BookId;
+            }
+            return View(itemsList);
+        }
 
         public IActionResult Privacy()
         {

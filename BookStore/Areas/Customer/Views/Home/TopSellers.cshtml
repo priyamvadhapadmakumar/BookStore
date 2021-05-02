@@ -1,0 +1,28 @@
+﻿@model System.Collections.Generic.List<BookStoreModels.BooksSold>
+@{
+    ViewData["Title"] = "TopSellers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Top 5 Best Selling Books</h1>
+<div class="row pb-3">
+    @foreach (var item in Model)
+    {
+        <div class="col-lg-3 col-md-6">
+            <div class="row p-2">
+                <div class="col-12  p-1" style="border:1px solid #008cba; border-radius: 5px;">
+                    <div class="card" style="border:0px;">
+                        <img src="@item.ImageUrl" class="card-img-top rounded" />
+                        <div class="pl-1">
+                            <p class="card-title h5"><b style="color:#2c3e50">@item.Title</b></p>
+                        </div>
+                    </div>
+                    <div>
+                        <a asp-action="Details" class="btn btn-primary form-control" asp-route-id="@item.BookId">Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

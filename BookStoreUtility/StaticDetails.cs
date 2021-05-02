@@ -6,6 +6,8 @@ namespace BookStoreUtility
 {
     public static class StaticDetails
     {
+        public const string Proc_BestSellingBooks = "bestSellers"; //Stored Procedure for getting top 5 best selling books
+
         public const string Role_Customer = "Independent Customer";
         public const string Role_Admin = "Administrator";
        

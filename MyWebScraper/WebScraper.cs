@@ -24,6 +24,7 @@ namespace BookStore.MyWebScraper
         {
             string url = $"https://www.amazon.com/s?i=stripbooks&rh=p_66%3A{isbn}&s=relevanceexprank&Adv-Srch-Books-Submit.x=11&Adv-Srch-Books-Submit.y=13&unfiltered=1&ref=sr_adv_b";
             var httpClient = new HttpClient();
+
             string html = httpClient.GetStringAsync(url).Result; //loads the entire html page of the url
 
             var htmlDocument = new HtmlDocument(); //a document to save html of url
